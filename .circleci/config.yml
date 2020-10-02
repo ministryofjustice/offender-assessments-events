@@ -1,42 +1,91 @@
-# Java Gradle CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-java/ for more details
-#
-version: 2
+version: 2.1
+
+orbs:
+  owasp: entur/owasp@0.0.10
+  hmpps: ministryofjustice/hmpps@1.0.0
+
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:11.0.8-jdk
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
-
-    environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
-
+  validate:
+    executor: hmpps/java
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      - run: gradle dependencies
-
+            - gradle-{{ checksum "build.gradle" }}
+            - gradle-
+      - run:
+          command: ./gradlew test
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: gradle-{{ checksum "build.gradle" }}
+      - store_test_results:
+          path: build/test-results
+      - store_artifacts:
+          path: build/reports/tests
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/libs
+            - build.gradle
 
-      # run tests!
-      - run: gradle test
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - validate:
+          filters:
+            tags:
+              ignore: /.*/
+#      - hmpps/helm_lint:
+#          name: helm_lint
+      - hmpps/build_docker:
+          name: build_docker
+          filters:
+            branches:
+              only:
+                - main
+      - hmpps/deploy_env:
+          name: deploy_dev
+          env: "dev"
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - validate
+#            - helm_lint
+            - build_docker
+#      - request-preprod-approval:
+#          type: approval
+#          requires:
+#            - deploy_dev
+#      - hmpps/deploy_env:
+#          name: deploy_preprod
+#          env: "preprod"
+#          context: ndh-preprod #override kube context
+#          requires:
+#            - request-preprod-approval
+#      - request-prod-approval:
+#          type: approval
+#          requires:
+#            - deploy_preprod
+#      - hmpps/deploy_env:
+#          name: deploy_prod
+#          env: "prod"
+#          slack_notification: true
+#          context: ndh-prod #override kube context
+#          requires:
+#            - request-prod-approval
+
+  scheduled:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 1-5"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - owasp/gradle_owasp_dependency_check:
+          executor: hmpps/java
