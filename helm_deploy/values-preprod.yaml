@@ -1,0 +1,25 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 4
+
+image:
+  repository: quay.io/hmpps/offender-assessment-events
+  tag: latest
+  port: 8080
+
+ingress:
+  enabled: true
+  enable_whitelist: true
+  hosts:
+    - host: offender-assessment-events-preprod.hmpps.service.justice.gov.uk
+#      cert_secret: hmpps-template-kotlin-cert
+  path: /
+
+env:
+  JAVA_OPTS: "-Xmx512m"
+
+whitelist:
+#  office: "217.33.148.210/32"
+#  health-kick: "35.177.252.195/32"
+#  mojvpn: "81.134.202.29/32"
