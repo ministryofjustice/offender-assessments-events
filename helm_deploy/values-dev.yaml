@@ -12,7 +12,7 @@ ingress:
   enabled: true
   enable_whitelist: true
   hosts:
-    - host: offender-assessment-events-dev.hmpps.service.justice.gov.uk
+    - host: off-events-dev.aks-dev-1.studio-hosting.service.justice.gov.uk
       cert_secret: offender-assessment-events-cert
   path: /
 
