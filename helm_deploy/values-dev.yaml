@@ -12,6 +12,9 @@ image:
 ingress:
   enabled: true
   enable_whitelist: true
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    certmanager.k8s.io/cluster-issuer: letsencrypt-production
   hosts:
     - host: off-events-dev.aks-dev-1.studio-hosting.service.justice.gov.uk
       cert_secret: offender-assessment-events-cert
