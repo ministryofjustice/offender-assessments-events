@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppstemplatepackagename.health
+package uk.gov.justice.digital.hmpps.assessment_events.health
 
 import com.microsoft.applicationinsights.extensibility.ContextInitializer
 import org.slf4j.LoggerFactory

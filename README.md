@@ -1,6 +1,6 @@
-# Offender Assessment Events
+# Offender Assessments Events
 
-[![CircleCI](https://circleci.com/gh/ministryofjustice/offender-assessment-events.svg?style=svg)](https://circleci.com/gh/ministryofjustice/offender-assessment-events)
+[![CircleCI](https://circleci.com/gh/ministryofjustice/offender-assessments-events.svg?style=svg)](https://circleci.com/gh/ministryofjustice/offender-assessments-events)
 
 ## Running the Application
 

@@ -1,10 +1,10 @@
 version: "3"
 services:
-  offender-assessment-events:
+  offender-assessments-events:
     build:
       context: .
     network_mode: "host"
-    container_name: offender-assessment-events
+    container_name: offender-assessments-events
     ports:
       - "8081:8080"
     healthcheck:

@@ -5,7 +5,7 @@ replicaCount: 2
 maxReplicaCount: 4
 
 image:
-  repository: quay.io/hmpps/offender-assessment-events
+  repository: quay.io/hmpps/offender-assessments-events
   tag: latest
   port: 8080
 
@@ -14,7 +14,7 @@ ingress:
   enable_whitelist: true
   hosts:
     - host: off-events-prod.aks-dev-1.studio-hosting.service.justice.gov.uk
-      cert_secret: offender-assessment-events-cert
+      cert_secret: offender-assessments-events-cert
   path: /
 
 env:
