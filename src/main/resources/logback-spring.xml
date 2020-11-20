@@ -25,7 +25,7 @@
     <appender name="logAppender" class="com.microsoft.applicationinsights.logback.ApplicationInsightsAppender"/>
   </springProfile>
 
-  <logger name="uk.gov.justice.digital.hmpps.offender-assessment-events.OffenderAssessmentEvents" additivity="false" level="DEBUG">
+  <logger name="uk.gov.justice.digital.hmpps.offender-assessments-events.OffenderAssessmentsEvents" additivity="false" level="DEBUG">
     <appender-ref ref="logAppender"/>
     <appender-ref ref="consoleAppender"/>
   </logger>
