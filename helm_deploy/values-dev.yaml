@@ -5,7 +5,7 @@ replicaCount: 1
 maxReplicaCount: 2
 
 image:
-  repository: quay.io/hmpps/offender-assessment-events
+  repository: quay.io/hmpps/offender-assessments-events
   tag: latest
   port: 8080
 
