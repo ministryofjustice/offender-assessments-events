@@ -21,6 +21,5 @@ env:
   JAVA_OPTS: "-Xmx512m"
 
 whitelist:
-  # office: "217.33.148.210/32"
-  # health-kick: "35.177.252.195/32"
-  # mojvpn: "81.134.202.29/32"
+  OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+

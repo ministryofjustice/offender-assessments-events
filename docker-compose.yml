@@ -1,17 +1,51 @@
 version: "3"
 services:
-  offender-assessments-events:
-    build:
-      context: .
-    network_mode: "host"
-    container_name: offender-assessments-events
+#  offender-assessments-events:
+#    build:
+#      context: .
+#    depends_on:
+#      - oauth
+#      - localstack
+#    network_mode: "host"
+#    container_name: offender-assessments-events
+#    ports:
+#      - "8081:8080"
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
+#    environment:
+#      - SERVER_PORT=8080
+#      - SPRING_PROFILES_ACTIVE=dev
+
+  oauth:
+    image: quay.io/hmpps/nomis-oauth2-server:latest
+    networks:
+      - hmpps
+    container_name: oauth
     ports:
-      - "8081:8080"
+      - "9090:9090"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
+      test: ["CMD", "curl", "-f", "http://localhost:9090/auth/health"]
     environment:
-      - SERVER_PORT=8080
+      - SERVER_PORT=9090
       - SPRING_PROFILES_ACTIVE=dev
+
+  localstack:
+    image: localstack/localstack
+    networks:
+      - hmpps
+    container_name: localstack
+    ports:
+      - "4567-4597:4567-4597"
+      - 8999:8080
+    environment:
+      - SERVICES=sns,sqs
+      - DATA_DIR=${DATA_DIR- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DEFAULT_REGION=eu-west-2
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
 networks:
   hmpps:
+

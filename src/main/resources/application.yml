@@ -8,10 +8,11 @@ spring:
   codec:
     max-in-memory-size: 10MB
 
-  jackson:
-    date-format: "yyyy-MM-dd HH:mm:ss"
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
 
 server:
   port: 8080
@@ -44,3 +45,13 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+
+logging:
+  level:
+    org:
+      hibernate: INFO
+    uk:
+      gov: INFO
+  uris:
+    exclude:
+      regex: /health|/info|/ping|/swagger.*|/webjars/.*|/v2/api-docs
