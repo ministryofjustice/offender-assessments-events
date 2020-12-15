@@ -1,0 +1,1 @@
+delete from EVENT_LOG where true

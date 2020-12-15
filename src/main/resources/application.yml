@@ -55,3 +55,13 @@ logging:
   uris:
     exclude:
       regex: /health|/info|/ping|/swagger.*|/webjars/.*|/v2/api-docs
+
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: eu-west-2
+
+last-accessed-value:
+  file: "/last-accessed.properties"
