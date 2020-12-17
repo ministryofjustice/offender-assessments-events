@@ -21,6 +21,29 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
         assertThat(eventEntities).extracting("eventLogPk").containsExactly(6L)
     }
 
+    @Test
+    fun returnsCompletedStatusEventsWithDateCompletedAfter(){
+
+        val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(LocalDateTime.of(2015, 1,1,1,1), "COMPLETE")
+        assertThat(eventEntities).isEqualTo(listOf(validCompletedAssessment()))
+        assertThat(eventEntities.size).isEqualTo(1)
+    }
+
+    fun validCompletedAssessment(): Assessment{
+        return Assessment(
+            oasysSetPk = 5432,
+            assessmentStatus = "COMPLETE",
+            assessmentType = "LAYER 3",
+            dateCompleted = LocalDateTime.of(2018,6,20,23,0,9),
+            group = AssessmentGroup(
+                oasysAssessmentGroupPk = 6543,
+                offender = Offender(
+                    offenderPk = 1234,
+                    pnc = "PNC"
+                )
+            )
+        )
+    }
 //    @Test
 //    fun returnsOnlyCompletedAssessmentEvents(){
 //

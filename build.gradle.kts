@@ -26,5 +26,5 @@ dependencies {
   runtimeOnly("org.flywaydb:flyway-core:6.3.3")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
-
+  testImplementation("com.ninja-squad:springmockk:2.0.3")
 }

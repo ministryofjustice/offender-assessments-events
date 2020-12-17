@@ -3,14 +3,12 @@ package uk.gov.justice.digital.hmpps.assessments_events.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessments_events.dto.EventDto
-import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType
 import uk.gov.justice.digital.hmpps.assessments_events.repository.AssessmentRepository
-import uk.gov.justice.digital.hmpps.assessments_events.repository.OffenderRepository
 import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEvent
 import java.time.LocalDateTime
 
 @Service
-class EventsService(val assessmentRepository: AssessmentRepository, val offenderRepository: OffenderRepository) {
+class EventsService(val assessmentRepository: AssessmentRepository) {
 
     @Autowired
     lateinit var lastAccessedEvent: LastAccessedEvent

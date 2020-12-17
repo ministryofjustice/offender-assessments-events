@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType
 import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.assessments_events.service.SnsService
 
-//@SpringBootTest(classes = [OffenderAssessmentsEvents::class])
 //class SnsServiceTest : IntegrationTestBase() {
 //
 //    @SpyBean

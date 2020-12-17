@@ -13,10 +13,6 @@ data class AssessmentGroup (
     @JoinColumn(name = "OFFENDER_PK", referencedColumnName = "OFFENDER_PK")
     val offender: Offender,
 
-    @OneToMany
-    @JoinColumn(name = "OASYS_ASSESSMENT_GROUP_PK", referencedColumnName = "OASYS_ASSESSMENT_GROUP_PK")
-    val assessments: Set<Assessment>
-
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
