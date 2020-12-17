@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessments_events
+package uk.gov.justice.digital.hmpps.assessments_events.dto
 
 import java.time.LocalDateTime
 
@@ -9,3 +9,7 @@ data class EventDto (
         val eventDate: LocalDateTime,
         val eventType: EventType
 )
+
+enum class EventType {
+    ASSESSMENT_COMPLETED
+}
