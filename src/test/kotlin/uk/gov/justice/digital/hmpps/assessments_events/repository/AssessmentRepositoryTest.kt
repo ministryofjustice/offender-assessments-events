@@ -6,19 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlConfig
 import org.springframework.test.context.jdbc.SqlGroup
+import uk.gov.justice.digital.hmpps.assessments_events.entity.Assessment
+import uk.gov.justice.digital.hmpps.assessments_events.entity.AssessmentGroup
+import uk.gov.justice.digital.hmpps.assessments_events.entity.Offender
 import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
+import java.time.LocalDateTime
+
 
 @SqlGroup(
-        Sql(scripts = ["classpath:events/before-test.sql"], config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)),
-        Sql(scripts = ["classpath:events/after-test.sql"], config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED), executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        Sql(scripts = ["classpath:assessment/before-test.sql"], config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED)),
+        Sql(scripts = ["classpath:assessment/after-test.sql"], config = SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED), executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 )
 class AssessmentRepositoryTest(@Autowired private val assessmentRepository: AssessmentRepository) : IntegrationTestBase() {
 
     @Test
-    fun returnsAllEventsGreaterThan(){
+    fun returnsAllEventsWithDateCompletedAfter(){
 
-        val eventEntities = assessmentRepository.findFirst20ByDateCompletedAfterOrderByDateCompleted(LocalDateTime.of(2017, 1,1,1,1))
-        assertThat(eventEntities).extracting("eventLogPk").containsExactly(6L)
+        val eventEntities = assessmentRepository.findByDateCompletedAfterOrderByDateCompleted(LocalDateTime.of(2017, 1,1,1,1))
+        assertThat(eventEntities).isEqualTo(listOf(validCompletedAssessment()))
+        assertThat(eventEntities.size).isEqualTo(1)
     }
 
     @Test

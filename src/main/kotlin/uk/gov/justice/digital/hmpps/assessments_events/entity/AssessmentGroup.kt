@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessments_events.entity
 
+import java.io.Serializable
 import javax.persistence.*
 
 @Table(name = "OASYS_ASSESSMENT_GROUP")
@@ -13,7 +14,7 @@ data class AssessmentGroup (
     @JoinColumn(name = "OFFENDER_PK", referencedColumnName = "OFFENDER_PK")
     val offender: Offender,
 
-) {
+): Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is AssessmentGroup) return false

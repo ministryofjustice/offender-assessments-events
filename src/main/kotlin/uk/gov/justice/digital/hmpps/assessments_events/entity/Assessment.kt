@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessments_events.entity
 
+import java.io.Serializable
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -22,7 +23,7 @@ data class Assessment(
         @ManyToOne
         @JoinColumn(name = "OASYS_ASSESSMENT_GROUP_PK")
         val group: AssessmentGroup,
-) {
+):Serializable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

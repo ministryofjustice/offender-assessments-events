@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessments_events.entity
 
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
@@ -10,8 +11,8 @@ data class Offender (
     val offenderPk: Long,
 
     @Column(name = "PNC")
-    val pnc: String? = null,
-) {
+    val pnc: String? = null
+): Serializable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,12 +1,14 @@
 package uk.gov.justice.digital.hmpps.assessments_events.dto
 
+import uk.gov.justice.digital.hmpps.assessments_events.entity.Assessment
 import java.time.LocalDateTime
 
 data class EventDto (
         val oasysOffenderPk: Long,
-        val offenderPNC: String,
-        val assessmentType: String,
-        val eventDate: LocalDateTime,
+        val offenderPNC: String?,
+        val assessmentType: String?,
+        val assessmentStatus: String,
+        val eventDate: LocalDateTime?,
         val eventType: EventType
         ) {
         companion object{
