@@ -27,3 +27,6 @@ sns:
 sqs:
   queue.name: test_queue
   endpoint.url: http://localhost:4576
+
+last-accessed-value:
+  file: "/last-accessed.properties"

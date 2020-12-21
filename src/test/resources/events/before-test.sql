@@ -1,9 +1,0 @@
-insert into EVENT_LOG (EVENT_LOG_PK, EVENT_TYPE_CODE, EVENT_TEXT, EVENT_DATE)
-values
-(1, 'CMP_ASSMT', '', '2019-11-14 12:00'),
-(2, 'CMP_ASSMT', '', '2019-11-14 12:00'),
-(3, 'CMP_ASSMT', '', '2019-11-14 12:00'),
-(4, 'CMP_ASSMT', '', '2019-11-14 12:00'),
-(5, 'CMP_ASSMT', '', '2019-11-14 12:00'),
-(6, 'CMP_ASSMT', '', '2019-11-14 12:00'),
-(7, 'UPD_ASSMT', '', '2019-11-14 12:00');

@@ -15,7 +15,7 @@ class EventsService(val assessmentRepository: AssessmentRepository) {
 
     val assessmentCompletedStatus = "COMPLETE"
     fun addNewEventsToTopic(){
-        val newEvents = getNewEvents(LocalDateTime.now().minusDays())
+//        val newEvents = getNewEvents(LocalDateTime.now().minusDays(1))
         //TODO add to topic
     }
 

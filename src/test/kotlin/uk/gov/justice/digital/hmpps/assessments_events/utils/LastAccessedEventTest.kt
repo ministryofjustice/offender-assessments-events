@@ -1,14 +1,18 @@
 package uk.gov.justice.digital.hmpps.assessments_events.utils
 
+
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
+import java.io.OutputStream
+import java.util.*
 
 class LastAccessedEventTest : IntegrationTestBase() {
 
-    @Autowired
-    lateinit var lastAccessedEvent: LastAccessedEvent
+    val lastAccessedEvent= LastAccessedEvent()
 
     @Test
     fun canReadLastAccessedFromProperties(){
@@ -19,8 +23,16 @@ class LastAccessedEventTest : IntegrationTestBase() {
 
     @Test
     fun canUpdateLastAccessedFromProperties(){
+        val key = slot<String>()
+        val value = slot<String>()
+        val prop: Properties = mockk()
 
-        val event = lastAccessedEvent.saveLastAccessedEvent("somenewtext")
-        //assertThat(event).isEqualTo("sometesttext")
+        lastAccessedEvent.saveLastAccessedEvent("somenewtext")
+
+        verify {prop.setProperty(capture(key), capture(value)) }
+        verify(exactly = 1) { prop.store(any<OutputStream>(), "") }
+        assertThat(key).isEqualTo("")
+        assertThat(key).isEqualTo("somenewtext")
+
     }
 }

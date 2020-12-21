@@ -11,8 +11,8 @@ data class EventDto (
         val eventDate: LocalDateTime?,
         val eventType: EventType
         ) {
-        companion object{
 
+        companion object{
                 fun from(assessment: Assessment):EventDto{
                         return EventDto(
                                 oasysOffenderPk = assessment.group.offender.offenderPk,

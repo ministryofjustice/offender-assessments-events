@@ -1,23 +1,23 @@
 package uk.gov.justice.digital.hmpps.assessments_events
-
-import com.amazonaws.services.sns.AmazonSNS
-import com.amazonaws.services.sns.model.PublishRequest
-import com.amazonaws.services.sqs.AmazonSQS
-import com.amazonaws.services.sqs.model.PurgeQueueRequest
-import com.nhaarman.mockitokotlin2.verify
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.SpyBean
-import java.time.LocalDateTime
-import org.mockito.ArgumentCaptor
-import org.springframework.boot.test.context.SpringBootTest
-import uk.gov.justice.digital.hmpps.assessments_events.dto.EventDto
-import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType
-import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.assessments_events.service.SnsService
-
+//
+//import com.amazonaws.services.sns.AmazonSNS
+//import com.amazonaws.services.sns.model.PublishRequest
+//import com.amazonaws.services.sqs.AmazonSQS
+//import com.amazonaws.services.sqs.model.PurgeQueueRequest
+//import com.nhaarman.mockitokotlin2.verify
+//import org.assertj.core.api.Assertions.assertThat
+//import org.junit.jupiter.api.BeforeEach
+//import org.junit.jupiter.api.Test
+//import org.springframework.beans.factory.annotation.Autowired
+//import org.springframework.boot.test.mock.mockito.SpyBean
+//import java.time.LocalDateTime
+//import org.mockito.ArgumentCaptor
+//import uk.gov.justice.digital.hmpps.assessments_events.dto.EventDto
+//import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType
+//
+//import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
+//import uk.gov.justice.digital.hmpps.assessments_events.service.SnsService
+//
 //class SnsServiceTest : IntegrationTestBase() {
 //
 //    @SpyBean
@@ -42,6 +42,7 @@ import uk.gov.justice.digital.hmpps.assessments_events.service.SnsService
 //        val eventDto = EventDto(
 //            oasysOffenderPk = 1L,
 //            assessmentType = "",
+//            assessmentStatus = "",
 //            offenderPNC = "",
 //            eventDate = LocalDateTime.of(2020, 1,1,1,1),
 //            eventType = EventType.ASSESSMENT_COMPLETED
@@ -61,6 +62,7 @@ import uk.gov.justice.digital.hmpps.assessments_events.service.SnsService
 //        val eventDto = EventDto(
 //            oasysOffenderPk = 1L,
 //            assessmentType = "",
+//            assessmentStatus = "",
 //            offenderPNC = "",
 //            eventDate = LocalDateTime.of(2020, 1,1,1,9),
 //            eventType = EventType.ASSESSMENT_COMPLETED
