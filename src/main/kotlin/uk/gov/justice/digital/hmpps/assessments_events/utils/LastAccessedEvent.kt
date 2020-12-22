@@ -6,32 +6,23 @@ import java.io.*
 import java.util.*
 
 @Component
-class LastAccessedEvent{
+class LastAccessedEvent(@Value("\${last-accessed-value.file}") private final val fileLocation : String){
 
-    @Value("\${last-accessed-value.file}")
-    lateinit var fileLocation : String
+    private final val file = File(javaClass.getResource(fileLocation).file)
+    private val prop = Properties()
+    private val input = FileInputStream(file)
 
     fun lastAccessedEvent(): String {
 
-        val file = File(javaClass.getResource(fileLocation).file)
-        val prop = Properties()
-
-        FileInputStream(file).use { prop.load(it) }
-        return prop.getProperty("lastAccessedEvent") ?: throw FileNotFoundException()
+        prop.load(input)
+        return prop.getProperty("lastAccessedEvent")// ?: throw FileNotFoundException())
     }
 
     fun saveLastAccessedEvent(newLastAccessedEvent: String) {
 
-        val file = File(javaClass.getResource(fileLocation).file)
-        val prop = Properties()
-
-        FileInputStream(file).use {
-            prop.load(it)
-            prop.setProperty("lastAccessedEvent", newLastAccessedEvent)
-
-            val out: OutputStream = FileOutputStream(file)
-            prop.store(out, "some comment")
-            out.close()
-        }
+        prop.load(input)
+        prop.setProperty("lastAccessedEvent", newLastAccessedEvent)
+        val out: OutputStream = FileOutputStream(file)
+        prop.store(out, "")
     }
 }
