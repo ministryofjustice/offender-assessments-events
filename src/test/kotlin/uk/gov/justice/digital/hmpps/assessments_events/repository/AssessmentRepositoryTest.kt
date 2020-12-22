@@ -20,35 +20,61 @@ import java.time.LocalDateTime
 class AssessmentRepositoryTest(@Autowired private val assessmentRepository: AssessmentRepository) : IntegrationTestBase() {
 
     @Test
-    fun returnsAllEventsWithDateCompletedAfter(){
+    fun `returns single value after date completed`() {
 
-        val eventEntities = assessmentRepository.findByDateCompletedAfterOrderByDateCompleted(LocalDateTime.of(2017, 1,1,1,1))
-        assertThat(eventEntities).isEqualTo(listOf(validCompletedAssessment()))
-        assertThat(eventEntities.size).isEqualTo(1)
+        val eventEntities =
+            assessmentRepository.findByDateCompletedAfterOrderByDateCompleted(LocalDateTime.of(2017, 1, 1, 1, 1))
+        assertThat(eventEntities).hasSize(1)
+        assertThat(eventEntities).isEqualTo(listOf(assessment2018))
     }
 
     @Test
-    fun returnsCompletedStatusEventsWithDateCompletedAfter(){
+    fun `returns multiple values after date completed in correct order`() {
 
-        val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(LocalDateTime.of(2015, 1,1,1,1), "COMPLETE")
-        assertThat(eventEntities).isEqualTo(listOf(validCompletedAssessment()))
-        assertThat(eventEntities.size).isEqualTo(1)
+        val eventEntities =
+            assessmentRepository.findByDateCompletedAfterOrderByDateCompleted(LocalDateTime.of(2015, 1, 1, 1, 1))
+        assertThat(eventEntities).hasSize(2)
+        assertThat(eventEntities).element(1).isEqualTo(assessment2016)
+        assertThat(eventEntities).element(1).isEqualTo(assessment2018)
     }
 
-    fun validCompletedAssessment(): Assessment{
-        return Assessment(
-            oasysSetPk = 5432,
-            assessmentStatus = "COMPLETE",
-            assessmentType = "LAYER 3",
-            dateCompleted = LocalDateTime.of(2018,6,20,23,0,9),
-            group = AssessmentGroup(
-                oasysAssessmentGroupPk = 6543,
-                offender = Offender(
-                    offenderPk = 1234,
-                    pnc = "PNC"
+    @Test
+    fun `returns only completed status events after date completed`() {
+
+        val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
+            LocalDateTime.of(
+                2015,
+                1,
+                1,
+                1,
+                1
+            ), "COMPLETE"
+        )
+        assertThat(eventEntities.size).isEqualTo(1)
+        assertThat(eventEntities).isEqualTo(listOf(assessment2018))
+    }
+
+
+    companion object {
+        val assessment2018 = validCompletedAssessment(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
+        val assessment2016 = validCompletedAssessment(LocalDateTime.of(2016, 7, 20, 2, 0, 9))
+
+        fun validCompletedAssessment(dateTime: LocalDateTime): Assessment {
+            return Assessment(
+                oasysSetPk = 5432,
+                assessmentStatus = "COMPLETE",
+                assessmentType = "LAYER 3",
+                dateCompleted = dateTime,
+                group = AssessmentGroup(
+                    oasysAssessmentGroupPk = 6543,
+                    offender = Offender(
+                        offenderPk = 1234,
+                        pnc = "PNC"
+                    )
                 )
             )
-        )
+        }
+
     }
 //    @Test
 //    fun returnsOnlyCompletedAssessmentEvents(){
