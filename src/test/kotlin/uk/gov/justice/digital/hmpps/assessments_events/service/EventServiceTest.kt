@@ -17,8 +17,8 @@ import java.time.LocalDateTime
 @ExtendWith(MockKExtension::class)
 @DisplayName("Detail Service tests")
 internal class EventServiceTest : IntegrationTestBase() {
-    val assessmentRepository: AssessmentRepository = mockk()
-    val service = EventsService(assessmentRepository);
+    final val assessmentRepository: AssessmentRepository = mockk()
+    val service = EventsService(assessmentRepository)
 
     @BeforeEach
     fun resetAllMocks() {
@@ -64,6 +64,45 @@ internal class EventServiceTest : IntegrationTestBase() {
                         timeCompleted,
                         eventType
                     )
+                )
+            )
+        }
+
+        @Test
+        fun `Should return multiple dtos if multiple assessments found`() {
+            val assessment = getPopulatedAssessment()
+            val assessments = listOf(
+                assessment,
+                assessment,
+                assessment,
+                assessment
+            )
+            every {
+                assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
+                    timeCompleted.minusDays(1),
+                    "COMPLETE"
+                )
+            } returns assessments
+
+            val response = service.getNewEvents(timeCompleted.minusDays(1))
+
+            verify {
+                assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
+                    timeCompleted.minusDays(1),
+                    "COMPLETE"
+                )
+            }
+
+
+            assertThat(response).hasSize(4)
+            assertThat(response).element(3).isEqualTo(
+                EventDto(
+                    offenderPk,
+                    offenderPNC,
+                    assessmentType,
+                    assessmentStatus,
+                    timeCompleted,
+                    eventType
                 )
             )
         }
