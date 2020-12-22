@@ -14,8 +14,8 @@ class SnsService ( awsSnsClient: AmazonSNS, @Value("\${sns.topic.arn}") val topi
     val notificationMessagingTemplate: NotificationMessagingTemplate = NotificationMessagingTemplate(awsSnsClient)
     val topicMessageChannel = TopicMessageChannel(awsSnsClient, topicArn)
 
-    fun sendEventSNS(eventDto: EventDto){
+    fun sendEventSNS(eventDtos: Collection<EventDto>){
         val gson = Gson()
-        notificationMessagingTemplate.convertAndSend(topicMessageChannel, gson.toJson(eventDto))
+        notificationMessagingTemplate.convertAndSend(topicMessageChannel, gson.toJson(eventDtos))
     }
 }

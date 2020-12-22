@@ -8,5 +8,4 @@ class EventsController(val eventsService: EventsService) {
     fun getNewEventsToTopic() {
         return eventsService.addNewEventsToTopic()
     }
-
 }

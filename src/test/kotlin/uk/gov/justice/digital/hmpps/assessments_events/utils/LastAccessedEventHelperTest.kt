@@ -2,15 +2,19 @@ package uk.gov.justice.digital.hmpps.assessments_events.utils
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
+import java.time.LocalDateTime
 
-class LastAccessedEventTest(@Value("\${last-accessed-value.file}") val fileLocation: String) : IntegrationTestBase() {
+class LastAccessedEventHelperTest : IntegrationTestBase() {
+
+    @Autowired
+    lateinit var lastAccessedEvent: LastAccessedEventHelper
 
     @Test
     fun canReadLastAccessedFromProperties(){
-        val lastAccessedEvent = LastAccessedEvent(fileLocation)
+
         val event = lastAccessedEvent.lastAccessedEvent()
-        assertThat(event).isEqualTo("sometesttext")
+        assertThat(event).isEqualTo(LocalDateTime.of(2020,1,1,1,1))
     }
 }

@@ -6,8 +6,6 @@ export AWS_SECRET_ACCESS_KEY=foobar
 export AWS_DEFAULT_REGION=eu-west-2
 export PAGER=
 
-printenv
-
 aws --endpoint-url=http://localhost:4575 sns create-topic --name offender_assessments_events
 aws --endpoint-url=http://localhost:4576 sqs create-queue --queue-name test_queue
 aws --endpoint-url=http://localhost:4575 sns subscribe \

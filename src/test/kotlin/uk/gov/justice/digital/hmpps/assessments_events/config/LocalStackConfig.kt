@@ -23,7 +23,6 @@ class LocalStackConfig {
         @Value("\${cloud.aws.region.static}") region:String
     ): AmazonSNS =
         AmazonSNSClientBuilder.standard()
-//            .withRegion(region)
             .withEndpointConfiguration(EndpointConfiguration(serviceEndpoint, region))
             .build()
 
@@ -33,7 +32,6 @@ class LocalStackConfig {
         @Value("\${cloud.aws.region.static}") region: String
     ): AmazonSQS =
         AmazonSQSClientBuilder.standard()
-//            .withRegion(region)
             .withEndpointConfiguration(EndpointConfiguration(serviceEndpoint, region))
             .build()
 

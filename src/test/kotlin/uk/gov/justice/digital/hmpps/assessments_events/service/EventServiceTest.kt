@@ -12,17 +12,25 @@ import uk.gov.justice.digital.hmpps.assessments_events.entity.AssessmentGroup
 import uk.gov.justice.digital.hmpps.assessments_events.entity.Offender
 import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.assessments_events.repository.AssessmentRepository
+import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEventHelper
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("Detail Service tests")
 internal class EventServiceTest : IntegrationTestBase() {
-    final val assessmentRepository: AssessmentRepository = mockk()
-    val service = EventsService(assessmentRepository)
+
+    private final val assessmentRepository: AssessmentRepository = mockk()
+    private final val lastAccessedEventHelper: LastAccessedEventHelper = mockk()
+    private final val snsService: SnsService = mockk()
+
+
+    val service = EventsService(assessmentRepository, lastAccessedEventHelper, snsService)
 
     @BeforeEach
     fun resetAllMocks() {
         clearMocks(assessmentRepository)
+        every {lastAccessedEventHelper.lastAccessedEvent()} returns timeCompleted.minusDays(1)
+        every {lastAccessedEventHelper.saveLastAccessedEvent(any())} just Runs
     }
 
     @AfterEach
@@ -35,37 +43,21 @@ internal class EventServiceTest : IntegrationTestBase() {
     inner class GetNewEventsTests {
         @Test
         fun `Should return dto if one assessment is found`() {
-            val assessment = getPopulatedAssessment()
-            val assessments = listOf(assessment)
+            val assessments = listOf(getPopulatedAssessment())
             every {
                 assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
                     timeCompleted.minusDays(1),
                     "COMPLETE"
-                )
-            } returns assessments
+                ) } returns assessments
 
-            val response = service.getNewEvents(timeCompleted.minusDays(1))
+            val response = service.getNewEvents()
 
             verify {
                 assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
                     timeCompleted.minusDays(1),
-                    "COMPLETE"
-                )
-            }
-
+                    "COMPLETE") }
             assertThat(response).hasSize(1)
-            assertThat(response).isEqualTo(
-                listOf(
-                    EventDto(
-                        offenderPk,
-                        offenderPNC,
-                        assessmentType,
-                        assessmentStatus,
-                        timeCompleted,
-                        eventType
-                    )
-                )
-            )
+            assertThat(response).isEqualTo(listOf( getPopulatedDto()))
         }
 
         @Test
@@ -81,61 +73,53 @@ internal class EventServiceTest : IntegrationTestBase() {
                 assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
                     timeCompleted.minusDays(1),
                     "COMPLETE"
-                )
-            } returns assessments
+                ) } returns assessments
 
-            val response = service.getNewEvents(timeCompleted.minusDays(1))
+            val response = service.getNewEvents()
 
             verify {
                 assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
                     timeCompleted.minusDays(1),
-                    "COMPLETE"
-                )
-            }
-
-
+                    "COMPLETE") }
             assertThat(response).hasSize(4)
-            assertThat(response).element(3).isEqualTo(
-                EventDto(
-                    offenderPk,
-                    offenderPNC,
-                    assessmentType,
-                    assessmentStatus,
-                    timeCompleted,
-                    eventType
-                )
-            )
+            assertThat(response).element(3).isEqualTo(getPopulatedDto())
         }
     }
 
     companion object {
-        val eventType = EventType.ASSESSMENT_COMPLETED
+        private val eventType = EventType.ASSESSMENT_COMPLETED
         private const val setPk = 4L
-        const val offenderPk = 25L
-        const val offenderPNC = "ABC"
-        const val assessmentType = "magic"
-        const val assessmentStatus = "pending"
+        private const val offenderPk = 25L
+        private const val offenderPNC = "ABC"
+        private const val assessmentType = "magic"
+        private const val assessmentStatus = "pending"
         val timeCompleted: LocalDateTime = LocalDateTime.now()
 
-        fun getPopulatedAssessment(): Assessment {
-
-            val offender = Offender(
+        fun getPopulatedDto(): EventDto {
+            return EventDto(
                 offenderPk,
                 offenderPNC,
+                assessmentType,
+                assessmentStatus,
+                timeCompleted,
+                eventType
             )
-            val group = AssessmentGroup(
-                7L,
-                offender
-            )
+        }
 
+        fun getPopulatedAssessment(): Assessment {
             return Assessment(
                 setPk,
                 assessmentStatus,
                 assessmentType,
                 timeCompleted,
-                group
+                AssessmentGroup(
+                    7L,
+                    Offender(
+                        offenderPk,
+                        offenderPNC
+                    )
+                )
             )
         }
     }
-
 }

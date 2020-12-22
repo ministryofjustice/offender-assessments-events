@@ -24,5 +24,4 @@ data class AssessmentGroup (
     override fun hashCode(): Int {
         return 31
     }
-
 }

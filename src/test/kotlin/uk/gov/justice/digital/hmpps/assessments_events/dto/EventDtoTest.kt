@@ -31,7 +31,6 @@ class EventDtoTest {
     @Test
     fun `Create Event Dto from Assessment`() {
         val assessment = getPopulatedAssessment()
-
         val eventDto = EventDto.from(assessment)
 
         assertThat(eventDto.oasysOffenderPk).isEqualTo(offenderPk)
@@ -53,21 +52,18 @@ class EventDtoTest {
 
         fun getPopulatedAssessment(): Assessment {
 
-            val offender = Offender(
-                offenderPk,
-                offenderPNC,
-            )
-            val group = AssessmentGroup(
-                7L,
-                offender
-            )
-
             return Assessment(
                 setPk,
                 assessmentStatus,
                 assessmentType,
                 timeCompleted,
-                group
+                AssessmentGroup(
+                    7L,
+                    Offender(
+                        offenderPk,
+                        offenderPNC,
+                    )
+                )
             )
         }
     }

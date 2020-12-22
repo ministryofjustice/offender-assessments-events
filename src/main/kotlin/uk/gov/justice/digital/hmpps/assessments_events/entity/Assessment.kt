@@ -35,3 +35,8 @@ data class Assessment(
         return 31
     }
 }
+
+enum class CompletedStatusType(val value: String) {
+    COMPLETE("COMPLETE")
+}
+

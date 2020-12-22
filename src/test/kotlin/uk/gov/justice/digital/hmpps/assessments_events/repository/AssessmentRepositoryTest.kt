@@ -59,7 +59,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
         val assessment2018 = validCompletedAssessment(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
         val assessment2016 = validCompletedAssessment(LocalDateTime.of(2016, 7, 20, 2, 0, 9))
 
-        fun validCompletedAssessment(dateTime: LocalDateTime): Assessment {
+        private fun validCompletedAssessment(dateTime: LocalDateTime): Assessment {
             return Assessment(
                 oasysSetPk = 5432,
                 assessmentStatus = "COMPLETE",
@@ -74,12 +74,5 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
                 )
             )
         }
-
     }
-//    @Test
-//    fun returnsOnlyCompletedAssessmentEvents(){
-//
-//        val eventEntities = assessmentRepository.findByEventLogPkGreaterThanAndEventTypeCodeEquals(1, "CMP_ASSMT")
-//        assertThat(eventEntities).extracting("eventTypeCode").containsOnly("CMP_ASSMT")
-//    }
 }

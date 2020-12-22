@@ -1,7 +1,10 @@
 package uk.gov.justice.digital.hmpps.assessments_events.entity
 
 import java.io.Serializable
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "OFFENDER")
