@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.assessments_events.utils.RequestData
 class SpringConfiguration : WebMvcConfigurer {
 
   @Value("\${logging.uris.exclude.regex}")
-  private val excludedLogUrls: String? = null
+  private val excludedLogUrls: String = ""
 
   @Bean(name = ["globalObjectMapper"])
   @Primary
