@@ -1,8 +1,0 @@
-
-sns:
-  topic:
-    arn: arn:aws:sns:eu-west-2:000000000000:offender_assessment_events
-  endpoint:
-    url: http://localstack:4575
-  provider: localstack
-  region: eu-west-2
