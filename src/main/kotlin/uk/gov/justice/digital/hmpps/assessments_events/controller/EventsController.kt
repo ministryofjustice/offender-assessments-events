@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.assessments_events.service.EventsService
 @RestController
 class EventsController(val eventsService: EventsService) {
 
-    fun getNewEventsToTopic() {
-        return eventsService.addNewEventsToTopic()
-    }
+  fun getNewEventsToTopic() {
+    return eventsService.addNewEventsToTopic()
+  }
 }

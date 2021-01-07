@@ -62,4 +62,3 @@ abstract class IntegrationTestBase {
     return { it.set(HttpHeaders.AUTHORIZATION, "Bearer $token") }
   }
 }
-

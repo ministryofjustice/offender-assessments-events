@@ -11,21 +11,21 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
-    override fun configure(http: HttpSecurity) {
-        http.headers().frameOptions().sameOrigin().and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+  override fun configure(http: HttpSecurity) {
+    http.headers().frameOptions().sameOrigin().and()
+      .sessionManagement()
+      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-                // Can't have CSRF protection as requires session
-                .and().csrf().disable()
-                .authorizeRequests { auth ->
-                    auth.antMatchers(
-                            "/webjars/**", "/favicon.ico", "/csrf",
-                            "/health/**", "/info", "/ping",
-                            "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
-                    ).permitAll()
-                            .anyRequest()
-                            .authenticated()
-                }.oauth2ResourceServer().jwt().jwtAuthenticationConverter(AuthAwareTokenConverter())
-    }
+      // Can't have CSRF protection as requires session
+      .and().csrf().disable()
+      .authorizeRequests { auth ->
+        auth.antMatchers(
+          "/webjars/**", "/favicon.ico", "/csrf",
+          "/health/**", "/info", "/ping",
+          "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
+        ).permitAll()
+          .anyRequest()
+          .authenticated()
+      }.oauth2ResourceServer().jwt().jwtAuthenticationConverter(AuthAwareTokenConverter())
+  }
 }

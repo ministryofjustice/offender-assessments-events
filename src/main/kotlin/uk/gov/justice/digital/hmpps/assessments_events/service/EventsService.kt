@@ -8,31 +8,31 @@ import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEventHe
 import java.time.LocalDateTime
 
 @Service
-class EventsService(val assessmentRepository: AssessmentRepository,  var lastAccessedEventHelper: LastAccessedEventHelper, val snsService: SnsService) {
+class EventsService(val assessmentRepository: AssessmentRepository, var lastAccessedEventHelper: LastAccessedEventHelper, val snsService: SnsService) {
 
-    fun addNewEventsToTopic(){
-        val events = getNewEvents()
-        snsService.sendEventSNS(events)
-    }
+  fun addNewEventsToTopic() {
+    val events = getNewEvents()
+    snsService.sendEventSNS(events)
+  }
 
-    fun getNewEvents(): Collection<EventDto> {
+  fun getNewEvents(): Collection<EventDto> {
 
-        val lastAccessedEvent = getLastAccessedEventDate()
-        //TODO (we only want a maximum n number of completed assessments to add to the topic at a time. This n should be configured as a property)
-        val assessments = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(lastAccessedEvent, CompletedStatusType.COMPLETE.value)
-        val events = assessments.map { EventDto.from(it) }
-        if (events.isEmpty()) {
-            saveLastAccessedEventDate(LocalDateTime.now())
-        } else { saveLastAccessedEventDate(assessments.last().dateCompleted) }
-        return events
-    }
+    val lastAccessedEvent = getLastAccessedEventDate()
+    // TODO (we only want a maximum n number of completed assessments to add to the topic at a time. This n should be configured as a property)
+    val assessments = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(lastAccessedEvent, CompletedStatusType.COMPLETE.value)
+    val events = assessments.map { EventDto.from(it) }
+    if (events.isEmpty()) {
+      saveLastAccessedEventDate(LocalDateTime.now())
+    } else { saveLastAccessedEventDate(assessments.last().dateCompleted) }
+    return events
+  }
 
-    fun getLastAccessedEventDate(): LocalDateTime {
-        return lastAccessedEventHelper.lastAccessedEvent()
-    }
+  fun getLastAccessedEventDate(): LocalDateTime {
+    return lastAccessedEventHelper.lastAccessedEvent()
+  }
 
-    fun saveLastAccessedEventDate(newLastAccessedEvent: LocalDateTime?) {
-        if (newLastAccessedEvent == null) { throw Exception() } else
-        lastAccessedEventHelper.saveLastAccessedEvent(newLastAccessedEvent)
-    }
+  fun saveLastAccessedEventDate(newLastAccessedEvent: LocalDateTime?) {
+    if (newLastAccessedEvent == null) { throw Exception() } else
+      lastAccessedEventHelper.saveLastAccessedEvent(newLastAccessedEvent)
+  }
 }

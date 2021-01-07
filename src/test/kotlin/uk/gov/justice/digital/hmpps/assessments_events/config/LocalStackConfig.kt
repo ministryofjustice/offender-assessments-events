@@ -27,5 +27,4 @@ class LocalStackConfig {
     println("LocalStack container started")
     return localStackContainer
   }
-
 }

@@ -14,26 +14,23 @@ import org.testcontainers.containers.localstack.LocalStackContainer
 @Configuration
 class SnsConfig(val localStackContainer: LocalStackContainer) {
 
-    @Bean
-    @Primary
-    fun awsSnsClient(
-    ): AmazonSNS =
-        AmazonSNSClientBuilder.standard()
-            .withEndpointConfiguration(localStackContainer.getEndpointConfiguration(LocalStackContainer.Service.SNS))
-            .build()
+  @Bean
+  @Primary
+  fun awsSnsClient(): AmazonSNS =
+    AmazonSNSClientBuilder.standard()
+      .withEndpointConfiguration(localStackContainer.getEndpointConfiguration(LocalStackContainer.Service.SNS))
+      .build()
 
-    @Bean
-    fun awsSqsClient(
-    ): AmazonSQS =
-        AmazonSQSClientBuilder.standard()
-            .withEndpointConfiguration(localStackContainer.getEndpointConfiguration(LocalStackContainer.Service.SQS))
-            .build()
+  @Bean
+  fun awsSqsClient(): AmazonSQS =
+    AmazonSQSClientBuilder.standard()
+      .withEndpointConfiguration(localStackContainer.getEndpointConfiguration(LocalStackContainer.Service.SQS))
+      .build()
 
-    @Bean
-    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-    fun queueUrl(
-        @Autowired awsSqsClient: AmazonSQS,
-        @Value("\${sqs.queue.name}") queueName: String
-    ): String = awsSqsClient.getQueueUrl(queueName).queueUrl
-
+  @Bean
+  @Suppress("SpringJavaInjectionPointsAutowiringInspection")
+  fun queueUrl(
+    @Autowired awsSqsClient: AmazonSQS,
+    @Value("\${sqs.queue.name}") queueName: String
+  ): String = awsSqsClient.getQueueUrl(queueName).queueUrl
 }

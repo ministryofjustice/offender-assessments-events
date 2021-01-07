@@ -9,62 +9,61 @@ import java.time.LocalDateTime
 
 class EventDtoTest {
 
-    @Test
-    fun `Create Event Dto`() {
-        val eventDto = EventDto(
+  @Test
+  fun `Create Event Dto`() {
+    val eventDto = EventDto(
+      offenderPk,
+      offenderPNC,
+      assessmentType,
+      assessmentStatus,
+      timeCompleted,
+      eventType
+    )
+
+    assertThat(eventDto.oasysOffenderPk).isEqualTo(offenderPk)
+    assertThat(eventDto.offenderPNC).isEqualTo(offenderPNC)
+    assertThat(eventDto.assessmentType).isEqualTo(assessmentType)
+    assertThat(eventDto.assessmentStatus).isEqualTo(assessmentStatus)
+    assertThat(eventDto.eventDate).isEqualTo(timeCompleted)
+    assertThat(eventDto.eventType).isEqualTo(eventType)
+  }
+
+  @Test
+  fun `Create Event Dto from Assessment`() {
+    val assessment = getPopulatedAssessment()
+    val eventDto = EventDto.from(assessment)
+
+    assertThat(eventDto.oasysOffenderPk).isEqualTo(offenderPk)
+    assertThat(eventDto.offenderPNC).isEqualTo(offenderPNC)
+    assertThat(eventDto.assessmentType).isEqualTo(assessmentType)
+    assertThat(eventDto.assessmentStatus).isEqualTo(assessmentStatus)
+    assertThat(eventDto.eventDate).isEqualTo(timeCompleted)
+    assertThat(eventDto.eventType).isEqualTo(eventType)
+  }
+
+  companion object {
+    val eventType = EventType.ASSESSMENT_COMPLETED
+    private const val setPk = 4L
+    const val offenderPk = 25L
+    const val offenderPNC = "ABC"
+    const val assessmentType = "magic"
+    const val assessmentStatus = "pending"
+    val timeCompleted: LocalDateTime = LocalDateTime.now()
+
+    fun getPopulatedAssessment(): Assessment {
+      return Assessment(
+        setPk,
+        assessmentStatus,
+        assessmentType,
+        timeCompleted,
+        AssessmentGroup(
+          7L,
+          Offender(
             offenderPk,
             offenderPNC,
-            assessmentType,
-            assessmentStatus,
-            timeCompleted,
-            eventType
+          )
         )
-
-        assertThat(eventDto.oasysOffenderPk).isEqualTo(offenderPk)
-        assertThat(eventDto.offenderPNC).isEqualTo(offenderPNC)
-        assertThat(eventDto.assessmentType).isEqualTo(assessmentType)
-        assertThat(eventDto.assessmentStatus).isEqualTo(assessmentStatus)
-        assertThat(eventDto.eventDate).isEqualTo(timeCompleted)
-        assertThat(eventDto.eventType).isEqualTo(eventType)
+      )
     }
-
-    @Test
-    fun `Create Event Dto from Assessment`() {
-        val assessment = getPopulatedAssessment()
-        val eventDto = EventDto.from(assessment)
-
-        assertThat(eventDto.oasysOffenderPk).isEqualTo(offenderPk)
-        assertThat(eventDto.offenderPNC).isEqualTo(offenderPNC)
-        assertThat(eventDto.assessmentType).isEqualTo(assessmentType)
-        assertThat(eventDto.assessmentStatus).isEqualTo(assessmentStatus)
-        assertThat(eventDto.eventDate).isEqualTo(timeCompleted)
-        assertThat(eventDto.eventType).isEqualTo(eventType)
-    }
-
-    companion object {
-        val eventType = EventType.ASSESSMENT_COMPLETED
-        private const val setPk = 4L
-        const val offenderPk = 25L
-        const val offenderPNC = "ABC"
-        const val assessmentType = "magic"
-        const val assessmentStatus = "pending"
-        val timeCompleted: LocalDateTime = LocalDateTime.now()
-
-        fun getPopulatedAssessment(): Assessment {
-
-            return Assessment(
-                setPk,
-                assessmentStatus,
-                assessmentType,
-                timeCompleted,
-                AssessmentGroup(
-                    7L,
-                    Offender(
-                        offenderPk,
-                        offenderPNC,
-                    )
-                )
-            )
-        }
-    }
+  }
 }

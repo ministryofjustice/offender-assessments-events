@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessments_events.dto.EventDto
 
 @Service
-class SnsService ( awsSnsClient: AmazonSNS, @Value("\${sns.topic.arn}") val topicArn: String ) {
+class SnsService(awsSnsClient: AmazonSNS, @Value("\${sns.topic.arn}") val topicArn: String) {
 
-    val notificationMessagingTemplate: NotificationMessagingTemplate = NotificationMessagingTemplate(awsSnsClient)
-    val topicMessageChannel = TopicMessageChannel(awsSnsClient, topicArn)
+  val notificationMessagingTemplate: NotificationMessagingTemplate = NotificationMessagingTemplate(awsSnsClient)
+  val topicMessageChannel = TopicMessageChannel(awsSnsClient, topicArn)
 
-    fun sendEventSNS(eventDtos: Collection<EventDto>){
-        val gson = Gson()
-        notificationMessagingTemplate.convertAndSend(topicMessageChannel, gson.toJson(eventDtos))
-    }
+  fun sendEventSNS(eventDtos: Collection<EventDto>) {
+    val gson = Gson()
+    notificationMessagingTemplate.convertAndSend(topicMessageChannel, gson.toJson(eventDtos))
+  }
 }

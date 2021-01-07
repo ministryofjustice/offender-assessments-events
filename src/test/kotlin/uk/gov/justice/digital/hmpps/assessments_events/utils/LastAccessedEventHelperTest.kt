@@ -8,13 +8,13 @@ import java.time.LocalDateTime
 
 class LastAccessedEventHelperTest : IntegrationTestBase() {
 
-    @Autowired
-    lateinit var lastAccessedEvent: LastAccessedEventHelper
+  @Autowired
+  lateinit var lastAccessedEvent: LastAccessedEventHelper
 
-    @Test
-    fun canReadLastAccessedFromProperties(){
+  @Test
+  fun canReadLastAccessedFromProperties() {
 
-        val event = lastAccessedEvent.lastAccessedEvent()
-        assertThat(event).isEqualTo(LocalDateTime.of(2020,1,1,1,1))
-    }
+    val event = lastAccessedEvent.lastAccessedEvent()
+    assertThat(event).isEqualTo(LocalDateTime.of(2020, 1, 1, 1, 1))
+  }
 }

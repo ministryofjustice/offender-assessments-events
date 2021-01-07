@@ -1,11 +1,15 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "2.1.2"
-  kotlin("plugin.spring") version "1.4.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "1.1.2"
+  kotlin("plugin.spring") version "1.4.21"
   kotlin("plugin.jpa") version "1.3.72"
 }
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
+}
+
+dependencyCheck {
+  suppressionFiles.add("hmpps-assessments-api-suppressions.xml")
 }
 
 dependencies {
@@ -29,6 +33,4 @@ dependencies {
   testImplementation("com.ninja-squad:springmockk:2.0.3")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:localstack:1.15.1")
-
-
 }

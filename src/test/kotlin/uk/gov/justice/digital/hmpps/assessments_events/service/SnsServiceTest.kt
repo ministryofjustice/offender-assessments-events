@@ -21,69 +21,67 @@ import java.time.LocalDateTime
 
 class SnsServiceTest : IntegrationTestBase() {
 
-    @SpyBean
-    lateinit var awsSnsClient: AmazonSNS
+  @SpyBean
+  lateinit var awsSnsClient: AmazonSNS
 
-    @Autowired
-    lateinit var awsSqsClient: AmazonSQS
+  @Autowired
+  lateinit var awsSqsClient: AmazonSQS
 
-    @Autowired
-    lateinit var snsService: SnsService
+  @Autowired
+  lateinit var snsService: SnsService
 
-    @Autowired
-    lateinit var queueUrl: String
+  @Autowired
+  lateinit var queueUrl: String
 
-    private val gson = GsonBuilder().create()
-    val dtoType = object : TypeToken<List<EventDto>>() {}.type!!
+  private val gson = GsonBuilder().create()
+  val dtoType = object : TypeToken<List<EventDto>>() {}.type!!
 
+  @BeforeEach
+  fun setUp() {
+    awsSqsClient.purgeQueue(PurgeQueueRequest(queueUrl))
+  }
 
-    @BeforeEach
-    fun setUp() {
-        awsSqsClient.purgeQueue(PurgeQueueRequest(queueUrl))
-    }
+  @Test
+  fun testSendEvent() {
+    val eventDto = EventDto(
+      oasysOffenderPk = 1L,
+      assessmentType = "",
+      assessmentStatus = "",
+      offenderPNC = "",
+      eventDate = LocalDateTime.of(2020, 1, 1, 1, 1),
+      eventType = EventType.ASSESSMENT_COMPLETED
+    )
+    val request = ArgumentCaptor.forClass(PublishRequest::class.java)
 
-    @Test
-    fun testSendEvent() {
-        val eventDto = EventDto(
-            oasysOffenderPk = 1L,
-            assessmentType = "",
-            assessmentStatus = "",
-            offenderPNC = "",
-            eventDate = LocalDateTime.of(2020, 1,1,1,1),
-            eventType = EventType.ASSESSMENT_COMPLETED
-        )
-        val request = ArgumentCaptor.forClass(PublishRequest::class.java)
+    snsService.sendEventSNS(listOf(eventDto))
 
-        snsService.sendEventSNS(listOf(eventDto))
+    verify(awsSnsClient).publish(request.capture())
 
-        verify(awsSnsClient).publish(request.capture())
+    val message = Gson().fromJson<List<EventDto>>(request.value.message, dtoType)
+    assertThat(message).isEqualTo(listOf(eventDto))
+    assertThat(request.value.topicArn).isEqualTo("arn:aws:sns:eu-west-2:000000000000:offender_assessments_events")
+  }
 
-        val message = Gson().fromJson<List<EventDto>>(request.value.message, dtoType)
-        assertThat(message).isEqualTo(listOf(eventDto))
-        assertThat(request.value.topicArn).isEqualTo("arn:aws:sns:eu-west-2:000000000000:offender_assessments_events")
-    }
+  @Test
+  fun testSendEventIsReceived() {
+    val eventDto = EventDto(
+      oasysOffenderPk = 1L,
+      assessmentType = "",
+      assessmentStatus = "",
+      offenderPNC = "",
+      eventDate = LocalDateTime.of(2020, 1, 1, 1, 9),
+      eventType = EventType.ASSESSMENT_COMPLETED
+    )
+    snsService.sendEventSNS(listOf(eventDto))
 
-    @Test
-    fun testSendEventIsReceived() {
-        val eventDto = EventDto(
-            oasysOffenderPk = 1L,
-            assessmentType = "",
-            assessmentStatus = "",
-            offenderPNC = "",
-            eventDate = LocalDateTime.of(2020, 1,1,1,9),
-            eventType = EventType.ASSESSMENT_COMPLETED
-        )
-        snsService.sendEventSNS(listOf(eventDto))
+    val message = getNextMessageOnTestQueue()
+    val convertedMessage = Gson().fromJson<List<EventDto>>(message.Message, dtoType)
+    assertThat(convertedMessage).isEqualTo(listOf(eventDto))
+  }
 
-        val message = getNextMessageOnTestQueue()
-        val convertedMessage = Gson().fromJson<List<EventDto>>(message.Message, dtoType)
-        assertThat(convertedMessage).isEqualTo(listOf(eventDto))
+  private fun getNextMessageOnTestQueue() = gson.fromJson(awsSqsClient.receiveMessage(queueUrl).messages[0].body, Message::class.java)
 
-    }
-    private fun getNextMessageOnTestQueue() = gson.fromJson(awsSqsClient.receiveMessage(queueUrl).messages[0].body, Message::class.java)
-
-    data class Source(val Value: String)
-    data class MessageAttributes(val eventType: EventDto, val source: Source)
-    data class Message(val Message: String, val MessageAttributes: MessageAttributes)
-
+  data class Source(val Value: String)
+  data class MessageAttributes(val eventType: EventDto, val source: Source)
+  data class Message(val Message: String, val MessageAttributes: MessageAttributes)
 }
