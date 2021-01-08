@@ -8,7 +8,7 @@ executors:
   validator:
     docker:
       - image: circleci/openjdk:11-jdk
-      - image: localstack/localstack:0.11.2
+      - image: localstack/localstack:0.10.5
         environment:
           - SERVICES=sqs,sns
           - DEBUG=${DEBUG- }
@@ -35,6 +35,9 @@ jobs:
       - run:
           name: Wait for SNS to be ready
           command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4575
+      - run:
+          name: Set up topic
+          command: src/test/resources/localstack/setup-sns.sh
       - restore_cache:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
