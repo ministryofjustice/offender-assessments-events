@@ -5,7 +5,7 @@ orbs:
   hmpps: ministryofjustice/hmpps@2.2
 
 executors:
-  validator-integration:
+  validator:
     docker:
       - image: circleci/openjdk:11-jdk
       - image: localstack/localstack:0.11.2
@@ -19,25 +19,29 @@ executors:
           - DEFAULT_REGION=eu-west-2
           - TMPDIR=/private
     environment:
-      _JAVA_OPTIONS: -Xmx256m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dorg.gradle.daemon=false
+      _JAVA_OPTIONS: -Xmx256m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-XX:+UseContainerSupport
     working_directory: ~/app
-  validator:
-    docker:
-      - image: circleci/openjdk:11-jdk
-    environment:
-      _JAVA_OPTIONS: -Xmx256m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dorg.gradle.daemon=false
-    working_directory: ~/app
+
 
 jobs:
   validate:
     executor: validator
     steps:
       - checkout
+      - hmpps/install_aws_cli
+      - run:
+          name: Wait for SQS to be ready
+          command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4576
+      - run:
+          name: Wait for SNS to be ready
+          command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4575
       - restore_cache:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
             - gradle-
       - run:
+          environment:
+            - AWS_PROVIDER: localstack
           command: ./gradlew check
       - save_cache:
           paths:
@@ -52,34 +56,6 @@ jobs:
           paths:
             - build/libs
             - build.gradle.kts
-  test-integration:
-    executor: validator-integration
-    steps:
-      - checkout
-      - hmpps/install_aws_cli
-      - run:
-          name: Wait for SQS to be ready
-          command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4576
-      - run:
-          name: Wait for SNS to be ready
-          command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4575
-      - run:
-          name: Set up topic
-          command: src/test/resources/localstack/setup-sns.sh
-      - restore_cache:
-          keys:
-            - gradle-{{ checksum "build.gradle.kts" }}
-            - gradle-
-      - run:
-          command: ./gradlew test
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: gradle-{{ checksum "build.gradle.kts" }}
-      - store_test_results:
-          path: build/test-results
-      - store_artifacts:
-          path: build/reports/tests
 
 workflows:
   version: 2
@@ -106,7 +82,6 @@ workflows:
                 - main
           requires:
             - validate
-            - test-integration
             - build_docker
             - helm_lint
 #      - request-preprod-approval:
