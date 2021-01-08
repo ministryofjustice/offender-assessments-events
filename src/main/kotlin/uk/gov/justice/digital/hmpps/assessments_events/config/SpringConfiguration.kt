@@ -18,26 +18,26 @@ import uk.gov.justice.digital.hmpps.assessments_events.utils.RequestData
 @Configuration
 class SpringConfiguration : WebMvcConfigurer {
 
-    @Value("\${logging.uris.exclude.regex}")
-    private val excludedLogUrls : String? = null
+  @Value("\${logging.uris.exclude.regex}")
+  private val excludedLogUrls: String = ""
 
-    @Bean(name = ["globalObjectMapper"])
-    @Primary
-    fun objectMapper(): ObjectMapper {
-        return ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
-                .registerModules(Jdk8Module(), JavaTimeModule(), KotlinModule())
-    }
+  @Bean(name = ["globalObjectMapper"])
+  @Primary
+  fun objectMapper(): ObjectMapper {
+    return ObjectMapper()
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+      .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
+      .registerModules(Jdk8Module(), JavaTimeModule(), KotlinModule())
+  }
 
-    @Bean
-    fun createRequestData(): RequestData {
-        return RequestData(excludedLogUrls)
-    }
+  @Bean
+  fun createRequestData(): RequestData {
+    return RequestData(excludedLogUrls)
+  }
 
-    override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(createRequestData())
-    }
+  override fun addInterceptors(registry: InterceptorRegistry) {
+    registry.addInterceptor(createRequestData())
+  }
 }

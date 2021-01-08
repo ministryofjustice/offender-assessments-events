@@ -11,22 +11,21 @@ class InfoTest : IntegrationTestBase() {
   @Test
   fun `Info page is accessible`() {
     webTestClient.get()
-        .uri("/info")
-        .exchange()
-        .expectStatus()
-        .isOk
-        .expectBody()
-        .jsonPath("app.name").isEqualTo("Offender Assesment Events")
+      .uri("/info")
+      .exchange()
+      .expectStatus()
+      .isOk
+      .expectBody()
+      .jsonPath("app.name").isEqualTo("Offender Assesment Events")
   }
 
   @Test
   fun `Info page reports version`() {
     webTestClient.get().uri("/info")
-        .exchange()
-        .expectStatus().isOk
-        .expectBody().jsonPath("build.version").value<String> {
-          assertThat(it).startsWith(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
-        }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody().jsonPath("build.version").value<String> {
+        assertThat(it).startsWith(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
+      }
   }
-
 }

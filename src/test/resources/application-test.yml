@@ -1,6 +1,18 @@
 spring:
   profiles:
     include: stdout
+  datasource:
+    url: 'jdbc:h2:mem:testdb;Mode=Oracle'
+  h2:
+    console:
+      enabled: false
+  flyway:
+    enabled: true
+
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
 
 server:
   shutdown: immediate
@@ -8,3 +20,18 @@ server:
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
+
+sns:
+  topic:
+    arn: arn:aws:sns:eu-west-2:000000000000:offender_assessments_events
+  endpoint:
+    url: http://localhost:4575
+  provider: localstack
+  region: eu-west-2
+
+sqs:
+  queue.name: test_queue
+  endpoint.url: http://localhost:4576
+
+last-accessed-value:
+  file: "/last-accessed.properties"

@@ -2,18 +2,49 @@ version: 2.1
 
 orbs:
   owasp: entur/owasp@0.0.10
-  hmpps: ministryofjustice/hmpps@1.1.3
+  hmpps: ministryofjustice/hmpps@2.2
+
+executors:
+  validator:
+    docker:
+      - image: circleci/openjdk:11-jdk
+      - image: localstack/localstack:0.10.5
+        environment:
+          - SERVICES=sqs,sns
+          - DEBUG=${DEBUG- }
+          - DATA_DIR=/tmp/localstack/data
+          - DOCKER_HOST=unix:///var/run/docker.sock
+          - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+          - AWS_EXECUTION_ENV=True
+          - DEFAULT_REGION=eu-west-2
+          - TMPDIR=/private
+    environment:
+      _JAVA_OPTIONS: -Xmx256m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-XX:+UseContainerSupport
+    working_directory: ~/app
+
 
 jobs:
   validate:
-    executor: hmpps/java
+    executor: validator
     steps:
       - checkout
+      - hmpps/install_aws_cli
+      - run:
+          name: Wait for SQS to be ready
+          command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4576
+      - run:
+          name: Wait for SNS to be ready
+          command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4575
+      - run:
+          name: Set up topic
+          command: src/test/resources/localstack/setup-sns.sh
       - restore_cache:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
             - gradle-
       - run:
+          environment:
+            - AWS_PROVIDER: localstack
           command: ./gradlew check
       - save_cache:
           paths:
@@ -23,6 +54,11 @@ jobs:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build/libs
+            - build.gradle.kts
 
 workflows:
   version: 2

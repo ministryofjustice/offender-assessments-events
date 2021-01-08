@@ -14,6 +14,11 @@ spring:
         jwt:
           issuer-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/issuer
 
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
 server:
   port: 8080
   servlet:
@@ -55,3 +60,14 @@ logging:
   uris:
     exclude:
       regex: /health|/info|/ping|/swagger.*|/webjars/.*|/v2/api-docs
+
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      static: eu-west-2
+      auto: false
+
+last-accessed-value:
+  file: "/last-accessed.properties"
