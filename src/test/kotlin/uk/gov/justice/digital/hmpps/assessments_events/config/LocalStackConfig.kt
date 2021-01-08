@@ -14,7 +14,7 @@ class LocalStackConfig {
   fun localStackContainer(): LocalStackContainer {
     println("LocalStack container starting")
 
-    val localStackContainer: LocalStackContainer = LocalStackContainer(DockerImageName.parse("localstack/localstack").withTag("0.11.2"))
+    val localStackContainer: LocalStackContainer = LocalStackContainer(DockerImageName.parse("localstack/localstack").withTag("0.10.5"))
       .withServices(LocalStackContainer.Service.SQS, LocalStackContainer.Service.SNS)
       .withClasspathResourceMapping("/localstack/setup-sns.sh", "/docker-entrypoint-initaws.d/setup-sns.sh", BindMode.READ_WRITE)
       .withEnv("HOSTNAME_EXTERNAL", "localhost")

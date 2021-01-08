@@ -8,7 +8,7 @@ executors:
   validator:
     docker:
       - image: circleci/openjdk:11-jdk
-      - image: localstack/localstack:0.11.2
+      - image: localstack/localstack:0.10.5
         environment:
           - SERVICES=sqs,sns
           - DEBUG=${DEBUG- }
