@@ -25,6 +25,7 @@ COPY --from=builder --chown=appuser:appgroup /app/build/libs/offender-assessment
 COPY --from=builder --chown=appuser:appgroup /app/build/libs/applicationinsights-agent*.jar /app/agent.jar
 COPY --from=builder --chown=appuser:appgroup /app/AI-Agent.xml /app
 
+ADD last-accessed.properties /app/build
 USER 2000
 
 ENTRYPOINT ["java", "-javaagent:/app/agent.jar", "-jar", "/app/app.jar"]

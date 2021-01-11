@@ -26,6 +26,8 @@ dependencies {
 
   implementation("org.apache.commons:commons-lang3:3.11")
 
+  implementation(files("lib/ojdbc8-12.2.0.1.jar"))
+
   runtimeOnly("com.h2database:h2:1.4.200")
   runtimeOnly("org.flywaydb:flyway-core:6.3.3")
 
