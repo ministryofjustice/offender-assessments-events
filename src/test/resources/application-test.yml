@@ -34,4 +34,4 @@ sqs:
   endpoint.url: http://localhost:4576
 
 last-accessed-value:
-  file: "/last-accessed.properties"
+  file: "./src/test/last-accessed.properties"
