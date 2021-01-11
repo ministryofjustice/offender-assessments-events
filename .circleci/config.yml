@@ -64,10 +64,6 @@ workflows:
   version: 2
   build-test-and-deploy:
     jobs:
-      - add_file:
-          steps:
-            - run: ADD ./last-accessed.properties
-
       - validate:
           filters:
             tags:
@@ -91,7 +87,6 @@ workflows:
             - validate
             - build_docker
             - helm_lint
-            - add_file
 #      - request-preprod-approval:
 #          type: approval
 #          requires:
