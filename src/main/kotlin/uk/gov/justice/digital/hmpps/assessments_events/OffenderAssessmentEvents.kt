@@ -1,5 +1,4 @@
 package uk.gov.justice.digital.hmpps.assessments_events
-
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 

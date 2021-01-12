@@ -19,4 +19,8 @@ env:
         name: {{ template "app.name" . }}
         key: APPINSIGHTS_INSTRUMENTATIONKEY
 
+  - name: LAST_ACCESSED_EVENT_FILE
+    value: "{{ .Values.env.LAST_ACCESSED_EVENT_FILE}}"
+
+
 {{- end -}}

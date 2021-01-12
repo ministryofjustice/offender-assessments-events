@@ -70,4 +70,4 @@ cloud:
       auto: false
 
 last-accessed-value:
-  file: "./src/main/last-accessed.properties"
+  file: "/tmp/last-accessed.properties"
