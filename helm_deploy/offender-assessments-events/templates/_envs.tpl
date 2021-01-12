@@ -22,5 +22,22 @@ env:
   - name: LAST_ACCESSED_EVENT_FILE
     value: "{{ .Values.env.LAST_ACCESSED_EVENT_FILE}}"
 
+  - name: SNS_AWS_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: offender-assessments-events-topic
+        key: access_key_id
+
+  - name: SNS_AWS_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: offender-assessments-events-topic
+        key: secret_access_key
+
+  - name: SNS_TOPIC_ARN
+    valueFrom:
+      secretKeyRef:
+        name: offender-assessments-events-topic
+        key: topic_arn
 
 {{- end -}}

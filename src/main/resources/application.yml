@@ -69,5 +69,8 @@ cloud:
       static: eu-west-2
       auto: false
 
+sns:
+  provider: aws
+
 last-accessed-value:
   file: "/tmp/last-accessed.properties"
