@@ -13,6 +13,9 @@ env:
   - name: SPRING_PROFILES_ACTIVE
     value: "logstash"
 
+      - name: OAUTH_ENDPOINT_URL
+        value: "{{ .Values.env.OAUTH_ENDPOINT_URL }}"
+
   - name: APPINSIGHTS_INSTRUMENTATIONKEY
     valueFrom:
       secretKeyRef:

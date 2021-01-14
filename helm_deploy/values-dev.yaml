@@ -20,6 +20,7 @@ ingress:
 env:
   JAVA_OPTS: "-Xmx512m"
   LAST_ACCESSED_EVENT_FILE: /tmp/last-accessed.properties
+  OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
 
 whitelist:
   OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
