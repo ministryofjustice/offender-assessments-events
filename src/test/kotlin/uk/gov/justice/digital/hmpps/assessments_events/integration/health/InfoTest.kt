@@ -16,7 +16,7 @@ class InfoTest : IntegrationTestBase() {
       .expectStatus()
       .isOk
       .expectBody()
-      .jsonPath("app.name").isEqualTo("Offender Assesment Events")
+      .jsonPath("app.name").isEqualTo("Offender Assessment Events")
   }
 
   @Test
