@@ -25,19 +25,19 @@ env:
   - name: SNS_AWS_ACCESS_KEY_ID
     valueFrom:
       secretKeyRef:
-        name: offender-assessments-events-sns-dev
+        name: offender-assessments-events
         key: access_key_id
 
   - name: SNS_AWS_SECRET_ACCESS_KEY
     valueFrom:
       secretKeyRef:
-        name: offender-assessments-events-sns-dev
+        name: offender-assessments-events
         key: secret_access_key
 
   - name: SNS_TOPIC_ARN
     valueFrom:
       secretKeyRef:
-        name: offender-assessments-events-sns-dev
+        name: offender-assessments-events
         key: topic_arn
 
 {{- end -}}
