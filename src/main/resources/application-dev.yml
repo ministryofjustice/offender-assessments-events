@@ -4,9 +4,6 @@ spring:
   h2:
     console:
       enabled: true
-  flyway:
-    enabled: true
-    clean-on-validation-error: true
 
 graceful:
   shutdown:

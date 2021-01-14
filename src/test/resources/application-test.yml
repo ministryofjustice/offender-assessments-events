@@ -6,8 +6,6 @@ spring:
   h2:
     console:
       enabled: false
-  flyway:
-    enabled: true
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"
