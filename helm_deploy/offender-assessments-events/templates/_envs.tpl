@@ -26,18 +26,36 @@ env:
     valueFrom:
       secretKeyRef:
         name: offender-assessments-events
-        key: access_key_id
+        key: SNS_AWS_ACCESS_KEY_ID
 
   - name: SNS_AWS_SECRET_ACCESS_KEY
     valueFrom:
       secretKeyRef:
         name: offender-assessments-events
-        key: secret_access_key
+        key: SNS_AWS_SECRET_ACCESS_KEY
 
   - name: SNS_TOPIC_ARN
     valueFrom:
       secretKeyRef:
         name: offender-assessments-events
-        key: topic_arn
+        key: SNS_TOPIC_ARN
+
+  - name: SPRING_DATASOURCE_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: SPRING_DATASOURCE_USERNAME
+
+  - name: SPRING_DATASOURCE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: SPRING_DATASOURCE_PASSWORD
+
+  - name: SPRING_DATASOURCE_URL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: SPRING_DATASOURCE_URL
 
 {{- end -}}
