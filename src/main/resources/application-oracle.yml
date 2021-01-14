@@ -1,7 +1,7 @@
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    dialect: org.hibernate.dialect.Oracle10gDialect
+#    dialect: org.hibernate.dialect.Oracle10gDialect
     hikari:
       connectionInitSql: alter session set current_schema=EOR
       maximum-pool-size: 5
