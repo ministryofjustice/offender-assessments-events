@@ -13,4 +13,12 @@ class EventsControllerTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isUnauthorized
   }
+
+  @Test
+  fun `trigger events endpoint`() {
+    webTestClient.post().uri("/events")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isOk
+  }
 }

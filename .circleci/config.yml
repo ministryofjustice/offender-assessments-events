@@ -30,12 +30,6 @@ jobs:
       - checkout
       - hmpps/install_aws_cli
       - run:
-          name: Wait for SQS to be ready
-          command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4576
-      - run:
-          name: Wait for SNS to be ready
-          command: curl -4 --connect-timeout 30 --retry-connrefused --retry 20 --retry-delay 5 http://localhost:4575
-      - run:
           name: Set up topic
           command: src/test/resources/localstack/setup-sns.sh
       - restore_cache:
