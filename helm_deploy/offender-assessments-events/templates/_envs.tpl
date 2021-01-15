@@ -11,7 +11,7 @@ env:
     value: "{{ .Values.env.JAVA_OPTS }}"
 
   - name: SPRING_PROFILES_ACTIVE
-    value: "logstash"
+    value: "oracle,logstash"
 
   - name: OAUTH_ENDPOINT_URL
     value: "{{ .Values.env.OAUTH_ENDPOINT_URL }}"
