@@ -26,6 +26,6 @@ data class EventDto(
   }
 }
 
-enum class EventType {
-  ASSESSMENT_COMPLETED
+enum class EventType(val value: String) {
+  ASSESSMENT_COMPLETED("ASSESSMENT_COMPLETED")
 }

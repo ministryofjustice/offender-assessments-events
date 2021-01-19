@@ -4,9 +4,8 @@ import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.model.PublishRequest
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.PurgeQueueRequest
-import com.google.common.reflect.TypeToken
-import com.microsoft.applicationinsights.core.dependencies.google.gson.Gson
 import com.microsoft.applicationinsights.core.dependencies.google.gson.GsonBuilder
+import com.microsoft.applicationinsights.core.dependencies.google.gson.JsonDeserializer
 import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -15,9 +14,10 @@ import org.mockito.ArgumentCaptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.SpyBean
 import uk.gov.justice.digital.hmpps.assessments_events.dto.EventDto
-import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType
 import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType as EventTypeEnum
 
 class SnsServiceTest : IntegrationTestBase() {
 
@@ -33,8 +33,13 @@ class SnsServiceTest : IntegrationTestBase() {
   @Autowired
   lateinit var queueUrl: String
 
-  private val gson = GsonBuilder().create()
-  val dtoType = object : TypeToken<List<EventDto>>() {}.type!!
+  val argumentCaptor: ArgumentCaptor<PublishRequest> = ArgumentCaptor.forClass(PublishRequest::class.java)
+
+  private val gson = GsonBuilder().registerTypeAdapter(
+    LocalDateTime::class.java,
+    JsonDeserializer { json, _, _ -> LocalDateTime.parse(json.asJsonPrimitive.asString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")) }
+  )
+    .create()
 
   @BeforeEach
   fun setUp() {
@@ -49,17 +54,17 @@ class SnsServiceTest : IntegrationTestBase() {
       assessmentStatus = "",
       offenderPNC = "",
       eventDate = LocalDateTime.of(2020, 1, 1, 1, 1),
-      eventType = EventType.ASSESSMENT_COMPLETED
+      eventType = EventTypeEnum.ASSESSMENT_COMPLETED
     )
-    val request = ArgumentCaptor.forClass(PublishRequest::class.java)
 
     snsService.sendEventSNS(listOf(eventDto))
 
-    verify(awsSnsClient).publish(request.capture())
+    verify(awsSnsClient).publish(argumentCaptor.capture())
 
-    val message = Gson().fromJson<List<EventDto>>(request.value.message, dtoType)
-    assertThat(message).isEqualTo(listOf(eventDto))
-    assertThat(request.value.topicArn).isEqualTo("arn:aws:sns:eu-west-2:000000000000:offender_assessments_events")
+    val message = gson.fromJson(argumentCaptor.value.message, EventDto::class.java)
+    assertThat(message).isEqualTo(eventDto)
+    assertThat(argumentCaptor.value.topicArn).isEqualTo("arn:aws:sns:eu-west-2:000000000000:offender_assessments_events")
+    assertThat(argumentCaptor.value.messageAttributes["eventType"]?.stringValue).isEqualTo("ASSESSMENT_COMPLETED")
   }
 
   @Test
@@ -70,18 +75,23 @@ class SnsServiceTest : IntegrationTestBase() {
       assessmentStatus = "",
       offenderPNC = "",
       eventDate = LocalDateTime.of(2020, 1, 1, 1, 9),
-      eventType = EventType.ASSESSMENT_COMPLETED
+      eventType = EventTypeEnum.ASSESSMENT_COMPLETED
     )
     snsService.sendEventSNS(listOf(eventDto))
 
+    verify(awsSnsClient).publish(argumentCaptor.capture())
+    val request = argumentCaptor.value
+
     val message = getNextMessageOnTestQueue()
-    val convertedMessage = Gson().fromJson<List<EventDto>>(message.Message, dtoType)
-    assertThat(convertedMessage).isEqualTo(listOf(eventDto))
+    val convertedMessage = gson.fromJson(message.Message, EventDto::class.java)
+    assertThat(convertedMessage).isEqualTo(eventDto)
   }
 
-  private fun getNextMessageOnTestQueue() = gson.fromJson(awsSqsClient.receiveMessage(queueUrl).messages[0].body, Message::class.java)
+  private fun getNextMessageOnTestQueue() =
+    gson.fromJson(awsSqsClient.receiveMessage(queueUrl).messages[0].body, Message::class.java)
 
+  data class EventType(val Value: String)
   data class Source(val Value: String)
-  data class MessageAttributes(val eventType: EventDto, val source: Source)
+  data class MessageAttributes(val eventType: EventType, val source: Source)
   data class Message(val Message: String, val MessageAttributes: MessageAttributes)
 }
