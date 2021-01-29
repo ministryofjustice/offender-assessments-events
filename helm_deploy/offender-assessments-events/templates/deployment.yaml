@@ -56,8 +56,7 @@ spec:
             timeoutSeconds: 30
             failureThreshold: 15
           volumeMounts:
-           - mountPath: {{ .Values.env.LAST_ACCESSED_EVENT_FILE }}
-             subPath: {{ (split "/" .Values.env.LAST_ACCESSED_EVENT_FILE)._2 }}
+           - mountPath: {{ .Values.env.LAST_ACCESSED_EVENT_DIR }}
              name: volume
       volumes:
         - name: volume

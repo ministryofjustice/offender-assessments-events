@@ -74,5 +74,6 @@ cloud:
 sns:
   provider: aws
 
+last-accessed-event-dir: "/tmp"
 last-accessed-value:
-  file: "/tmp/last-accessed.properties"
+  file: "${last-accessed-dir}/last-accessed.properties"

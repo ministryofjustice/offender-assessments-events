@@ -19,6 +19,7 @@ ingress:
 
 env:
   JAVA_OPTS: "-Xmx512m"
+  LAST_ACCESSED_EVENT_DIR: /tmp
 
 whitelist:
   # office: "217.33.148.210/32"
