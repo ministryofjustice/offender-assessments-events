@@ -76,4 +76,4 @@ sns:
 
 last-accessed-event-dir: "/tmp"
 last-accessed-value:
-  file: "${last-accessed-dir}/last-accessed.properties"
+  file: "${last-accessed-event-dir}/last-accessed.properties"
