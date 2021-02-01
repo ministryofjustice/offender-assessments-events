@@ -23,7 +23,7 @@ env:
         key: APPINSIGHTS_INSTRUMENTATIONKEY
 
   - name: LAST_ACCESSED_EVENT_DIR
-    value: "{{ .Values.env.LAST_ACCESSED_EVENT_DIR}}"
+    value: "{{ .Values.env.LAST_ACCESSED_EVENT_DIR }}"
 
   - name: SNS_AWS_ACCESS_KEY_ID
     valueFrom:
