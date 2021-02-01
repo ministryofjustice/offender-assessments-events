@@ -58,7 +58,7 @@ spec:
           volumeMounts:
            - mountPath: {{ .Values.env.LAST_ACCESSED_EVENT_DIR }}
              name: volume
-  {{ include "deployment.envs" . | nindent 10 }}
+          {{ include "deployment.envs" . | nindent 10 }}
       volumes:
         - name: volume
           persistentVolumeClaim:
