@@ -1,0 +1,21 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: trigger-update
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: busyboxcurl
+            image: radial/busyboxplus:curl
+            imagePullPolicy: IfNotPresent
+            args:
+            - /bin/sh
+            - -c
+            {{- range .Values.ingress.hosts }}
+            - curl {{ .host }}/events
+            {{- end }}
+          restartPolicy: OnFailure
