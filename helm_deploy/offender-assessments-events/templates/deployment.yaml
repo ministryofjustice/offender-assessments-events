@@ -55,4 +55,11 @@ spec:
             initialDelaySeconds: 60
             timeoutSeconds: 30
             failureThreshold: 15
+          volumeMounts:
+           - mountPath: {{ .Values.env.LAST_ACCESSED_EVENT_DIR }}
+             name: volume
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: offender-assessments-events-azfile
   {{ include "deployment.envs" . | nindent 10 }}

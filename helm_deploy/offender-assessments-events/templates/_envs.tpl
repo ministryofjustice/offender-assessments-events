@@ -22,8 +22,8 @@ env:
         name: {{ template "app.name" . }}
         key: APPINSIGHTS_INSTRUMENTATIONKEY
 
-  - name: LAST_ACCESSED_EVENT_FILE
-    value: "{{ .Values.env.LAST_ACCESSED_EVENT_FILE}}"
+  - name: LAST_ACCESSED_EVENT_DIR
+    value: "{{ .Values.env.LAST_ACCESSED_EVENT_DIR}}"
 
   - name: SNS_AWS_ACCESS_KEY_ID
     valueFrom:
