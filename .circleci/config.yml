@@ -36,7 +36,7 @@ jobs:
             DOCKERIZE_VERSION: v0.3.0
       - run:
           name: Wait for localstack
-          command: dockerize -wait http://localhost:4575 -timeout 2m
+          command: dockerize -wait tcp://localhost:4575 -timeout 2m
       - run:
           name: Set up topic
           command: src/test/resources/localstack/setup-sns.sh
