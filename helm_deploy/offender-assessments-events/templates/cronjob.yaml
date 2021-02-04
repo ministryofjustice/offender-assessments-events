@@ -4,18 +4,28 @@ metadata:
   name: trigger-update
 spec:
   schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
   jobTemplate:
+    metadata:
+      labels:
+        cron-job: trigger-update
     spec:
+      # ttlSecondsAfterFinished: 180
+      backoffLimit: 5
+      activeDeadlineSeconds: 30
       template:
+        metadata:
+          labels:
+            cron-job: trigger-update
         spec:
           containers:
-          - name: busyboxcurl
+          - name: trigger-update
             image: radial/busyboxplus:curl
             imagePullPolicy: IfNotPresent
             args:
             - /bin/sh
             - -c
-            {{- range .Values.ingress.hosts }}
-            - curl {{ .host }}/events
-            {{- end }}
+            - curl {{ template "app.fullname" . }}:{{ .Values.image.port }}/events
           restartPolicy: OnFailure
