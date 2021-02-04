@@ -30,6 +30,14 @@ jobs:
       - checkout
       - hmpps/install_aws_cli
       - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+      - run:
+          name: Wait for localstack
+          command: dockerize -wait tcp://localhost:4575 -timeout 2m
+      - run:
           name: Set up topic
           command: src/test/resources/localstack/setup-sns.sh
       - restore_cache:
