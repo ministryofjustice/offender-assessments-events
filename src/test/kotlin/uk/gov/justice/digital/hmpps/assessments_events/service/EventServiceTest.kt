@@ -114,6 +114,27 @@ internal class EventServiceTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `Should update last accessed date with most recent date if multiple assessments found`() {
+      val assessment = getPopulatedAssessment()
+      val assessments = listOf(
+        assessment,
+        assessment.copy(dateCompleted = dateCompleted.minusDays(3)),
+        assessment.copy(dateCompleted = dateCompleted.minusDays(5)),
+        assessment.copy(dateCompleted = dateCompleted.minusHours(9))
+      )
+      every {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+      } returns assessments
+
+      eventsService.sendNewEventsToTopic()
+
+      verify(exactly = 1) {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+      }
+      verify(exactly = 1) { lastAccessedEventHelper.saveLastAccessedEvent(dateCompleted) }
+    }
+
+    @Test
     fun `Should send event dtos since given date to sns`() {
       val sinceDate = LocalDateTime.of(2021, 1, 1, 1, 1, 1)
 

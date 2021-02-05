@@ -38,7 +38,7 @@ class EventsService(val assessmentRepository: AssessmentRepository, var lastAcce
     log.info("Getting new events since date: $date")
     val assessments = assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(date, CompletedStatusType.COMPLETE.value)
     log.info("Found ${assessments.size} new events.")
-    return assessments
+    return assessments.sortedBy { it.dateCompleted }
   }
 
   fun getLastAccessedEventDate(): LocalDateTime {
