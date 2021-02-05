@@ -17,33 +17,45 @@ class EventsService(val assessmentRepository: AssessmentRepository, var lastAcce
     val log: Logger = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun addNewEventsToTopic() {
-    val events = getNewEvents()
-    snsService.sendEventSNS(events)
+  fun sendNewEventsToTopic() {
+    val events = getNewAssessmentEvents()
+    snsService.sendEventSNS(dtoFromEntity(events))
   }
 
-  fun getNewEvents(): Collection<EventDto> {
+  fun sendNewEventsToTopic(date: LocalDateTime) {
+    val events = getNewAssessmentEventsSinceDate(date)
+    snsService.sendEventSNS(dtoFromEntity(events))
+  }
 
+  fun getNewAssessmentEvents(): Collection<Assessment> {
     val lastAccessedEvent = getLastAccessedEventDate()
-    // TODO (we only want a maximum n number of completed assessments to add to the topic at a time. This n should be configured as a property)
-    log.info("Getting new events since date: $lastAccessedEvent")
+    val assessments = getNewAssessmentEventsSinceDate(lastAccessedEvent)
+    saveLastAccessedEventDate(assessments)
+    return assessments
+  }
 
-    val eventEntity = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(lastAccessedEvent, CompletedStatusType.COMPLETE.value)
-    log.info("Found ${eventEntity.size} new events.")
-    val eventDtos = eventEntity.map { EventDto.from(it) }
-    saveLastAccessedEventDate(eventEntity)
-
-    return eventDtos
+  fun getNewAssessmentEventsSinceDate(date: LocalDateTime): Collection<Assessment> {
+    log.info("Getting new events since date: $date")
+    val assessments = assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(date, CompletedStatusType.COMPLETE.value)
+    log.info("Found ${assessments.size} new events.")
+    return assessments
   }
 
   fun getLastAccessedEventDate(): LocalDateTime {
-    return lastAccessedEventHelper.lastAccessedEvent()
+    val date = lastAccessedEventHelper.lastAccessedEvent()
+    log.info("Using last accessed event date: $date")
+    return date
   }
 
   fun saveLastAccessedEventDate(eventDtos: Collection<Assessment>) {
-    var newLastAccessedEventDate = LocalDateTime.now()
-    if (eventDtos.isNotEmpty()) { newLastAccessedEventDate = eventDtos.last().dateCompleted }
-    log.info("Saving new last accessed event date to: $newLastAccessedEventDate")
-    lastAccessedEventHelper.saveLastAccessedEvent(newLastAccessedEventDate)
+    if (eventDtos.isNotEmpty()) {
+      val newLastAccessedEventDate = eventDtos.last().dateCompleted
+      log.info("Saving new last accessed event date to: $newLastAccessedEventDate")
+      lastAccessedEventHelper.saveLastAccessedEvent(newLastAccessedEventDate!!)
+    } else { log.info("No new last accessed event date saved") }
+  }
+
+  fun dtoFromEntity(assessments: Collection<Assessment>): List<EventDto> {
+    return assessments.map { EventDto.from(it) }
   }
 }
