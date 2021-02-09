@@ -1,27 +1,26 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: trigger-update
+  name: trigger-events-update
 spec:
   schedule: "*/1 * * * *"
   successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
   concurrencyPolicy: Forbid
   jobTemplate:
     metadata:
       labels:
-        cron-job: trigger-update
+        cron-job: trigger-events-update
     spec:
-      # ttlSecondsAfterFinished: 180
-      backoffLimit: 5
+      backoffLimit: 3
       activeDeadlineSeconds: 30
       template:
         metadata:
           labels:
-            cron-job: trigger-update
+            cron-job: trigger-events-update
         spec:
           containers:
-          - name: trigger-update
+          - name: trigger-events-update
             image: radial/busyboxplus:curl
             imagePullPolicy: IfNotPresent
             args:
