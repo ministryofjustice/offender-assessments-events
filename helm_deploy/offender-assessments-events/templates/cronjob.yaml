@@ -1,7 +1,9 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: trigger-events-update
+  name: {{ template "app.fullname" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
 spec:
   schedule: "*/1 * * * *"
   successfulJobsHistoryLimit: 3
