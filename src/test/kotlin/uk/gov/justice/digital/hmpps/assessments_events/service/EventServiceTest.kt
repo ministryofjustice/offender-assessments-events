@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessments_events.service
 
+import io.mockk.Called
 import io.mockk.Runs
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
@@ -7,6 +8,7 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -26,20 +28,24 @@ import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEventHe
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
-@DisplayName("Detail Service tests")
+@DisplayName("Event Service tests")
 internal class EventServiceTest : IntegrationTestBase() {
 
   private final val assessmentRepository: AssessmentRepository = mockk()
   private final val lastAccessedEventHelper: LastAccessedEventHelper = mockk()
   private final val snsService: SnsService = mockk()
 
-  val service = EventsService(assessmentRepository, lastAccessedEventHelper, snsService)
+  private val eventsService = EventsService(assessmentRepository, lastAccessedEventHelper, snsService)
+
+  private val dateCompleted: LocalDateTime = LocalDateTime.of(2020, 1, 1, 1, 1, 1)
+  private val testDate: LocalDateTime = dateCompleted.minusDays(1)
 
   @BeforeEach
   fun resetAllMocks() {
     clearMocks(assessmentRepository)
-    every { lastAccessedEventHelper.lastAccessedEvent() } returns timeCompleted.minusDays(1)
+    every { lastAccessedEventHelper.lastAccessedEvent() } returns testDate
     every { lastAccessedEventHelper.saveLastAccessedEvent(any()) } just Runs
+    every { snsService.sendEventSNS(any()) } just Runs
   }
 
   @AfterEach
@@ -51,90 +57,148 @@ internal class EventServiceTest : IntegrationTestBase() {
   @DisplayName("Get New Events")
   inner class GetNewEventsTests {
     @Test
-    fun `Should return dto if one assessment is found`() {
+    fun `Should send dto to sns if one assessment is found`() {
       val assessments = listOf(getPopulatedAssessment())
+
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
-          timeCompleted.minusDays(1),
-          "COMPLETE"
-        )
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
       } returns assessments
 
-      val response = service.getNewEvents()
+      eventsService.sendNewEventsToTopic()
 
       verify {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
-          timeCompleted.minusDays(1),
-          "COMPLETE"
-        )
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
       }
-      assertThat(response).hasSize(1)
-      assertThat(response).isEqualTo(listOf(getPopulatedDto()))
+      val eventsDto = slot<Collection<EventDto>>()
+      verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
+      assertThat(eventsDto.captured).hasSize(1)
+      assertThat(eventsDto.captured.elementAt(0)).isEqualTo(getPopulatedDto())
     }
 
     @Test
-    fun `Should return multiple dtos if multiple assessments found`() {
+    fun `Should update last accessed event when assessment is found`() {
+      val assessments = listOf(getPopulatedAssessment())
+
+      every {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+      } returns assessments
+
+      eventsService.sendNewEventsToTopic()
+
+      verify {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+      }
+      val eventsDto = slot<Collection<EventDto>>()
+      verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
+      verify(exactly = 1) { lastAccessedEventHelper.saveLastAccessedEvent(dateCompleted) }
+    }
+
+    @Test
+    fun `Should send multiple event dtos to SNS if multiple assessments found`() {
+      val assessment = getPopulatedAssessment()
+      val assessments = listOf(assessment, assessment, assessment, assessment)
+
+      every {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+      } returns assessments
+
+      eventsService.sendNewEventsToTopic()
+
+      verify(exactly = 1) {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+      }
+      val eventsDto = slot<Collection<EventDto>>()
+      verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
+      assertThat(eventsDto.captured).hasSize(4)
+      assertThat(eventsDto.captured).element(3).isEqualTo(getPopulatedDto())
+    }
+
+    @Test
+    fun `Should update last accessed date with most recent date if multiple assessments found`() {
       val assessment = getPopulatedAssessment()
       val assessments = listOf(
         assessment,
-        assessment,
-        assessment,
-        assessment
+        assessment.copy(dateCompleted = dateCompleted.minusDays(3)),
+        assessment.copy(dateCompleted = dateCompleted.minusDays(5)),
+        assessment.copy(dateCompleted = dateCompleted.minusHours(9))
       )
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
-          timeCompleted.minusDays(1),
-          "COMPLETE"
-        )
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
       } returns assessments
 
-      val response = service.getNewEvents()
+      eventsService.sendNewEventsToTopic()
 
-      verify {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
-          timeCompleted.minusDays(1),
-          "COMPLETE"
-        )
+      verify(exactly = 1) {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
       }
-      assertThat(response).hasSize(4)
-      assertThat(response).element(3).isEqualTo(getPopulatedDto())
+      verify(exactly = 1) { lastAccessedEventHelper.saveLastAccessedEvent(dateCompleted) }
+    }
+
+    @Test
+    fun `Should send event dtos since given date to sns`() {
+      val sinceDate = LocalDateTime.of(2021, 1, 1, 1, 1, 1)
+
+      val assessments = listOf(getPopulatedAssessment())
+      every {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(sinceDate, "COMPLETE")
+      } returns assessments
+      eventsService.sendNewEventsToTopic(sinceDate)
+
+      verify(exactly = 1) { assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(sinceDate, "COMPLETE") }
+      verify(exactly = 1) { snsService.sendEventSNS(any()) }
+
+      val eventsDto = slot<Collection<EventDto>>()
+      verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
+      assertThat(eventsDto.captured).hasSize(1)
+      assertThat(eventsDto.captured).element(0).isEqualTo(getPopulatedDto())
+    }
+
+    @Test
+    fun `Should not update last accessed event when given date`() {
+      val sinceDate = LocalDateTime.of(2021, 1, 1, 1, 1, 1)
+
+      val assessments = listOf(getPopulatedAssessment())
+      every {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(sinceDate, "COMPLETE")
+      } returns assessments
+      eventsService.sendNewEventsToTopic(sinceDate)
+
+      verify(exactly = 1) { assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(sinceDate, "COMPLETE") }
+      verify { lastAccessedEventHelper wasNot Called }
     }
   }
 
-  companion object {
-    private val eventType = EventType.ASSESSMENT_COMPLETED
-    private const val setPk = 4L
-    private const val offenderPk = 25L
-    private const val offenderPNC = "ABC"
-    private const val assessmentType = "magic"
-    private const val assessmentStatus = "pending"
-    val timeCompleted: LocalDateTime = LocalDateTime.now()
+  private val eventType = EventType.ASSESSMENT_COMPLETED
+  private val setPk = 4L
+  private val offenderPk = 25L
+  private val offenderPNC = "ABC"
+  private val assessmentType = "type"
+  private val assessmentStatus = "pending"
 
-    fun getPopulatedDto(): EventDto {
-      return EventDto(
-        offenderPk,
-        offenderPNC,
-        assessmentType,
-        assessmentStatus,
-        timeCompleted,
-        eventType
-      )
-    }
+  fun getPopulatedDto(): EventDto {
+    return EventDto(
+      offenderPk,
+      offenderPNC,
+      assessmentType,
+      assessmentStatus,
+      dateCompleted,
+      eventType
+    )
+  }
 
-    fun getPopulatedAssessment(): Assessment {
-      return Assessment(
-        setPk,
-        assessmentStatus,
-        assessmentType,
-        timeCompleted,
-        AssessmentGroup(
-          7L,
-          Offender(
-            offenderPk,
-            offenderPNC
-          )
+  fun getPopulatedAssessment(): Assessment {
+    return Assessment(
+      setPk,
+      assessmentStatus,
+      assessmentType,
+      dateCompleted,
+      AssessmentGroup(
+        7L,
+        Offender(
+          offenderPk,
+          offenderPNC
         )
       )
-    }
+    )
   }
 }
