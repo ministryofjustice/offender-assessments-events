@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.assessments_events.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -32,7 +33,7 @@ class EventsController(val eventsService: EventsService) {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  fun getNewEventsSinceDateToTopic(@PathVariable date: LocalDateTime) {
+  fun getNewEventsSinceDateToTopic(@PathVariable(value = "date") @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS") date: LocalDateTime) {
     return eventsService.sendNewEventsToTopic(date)
   }
 }
