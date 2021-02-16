@@ -33,7 +33,7 @@ class EventsController(val eventsService: EventsService) {
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
-  fun getNewEventsSinceDateToTopic(@PathVariable(value = "date") @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS") date: LocalDateTime) {
+  fun getNewEventsSinceDateToTopic(@PathVariable(value = "date") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS") date: LocalDateTime) {
     return eventsService.sendNewEventsToTopic(date)
   }
 }
