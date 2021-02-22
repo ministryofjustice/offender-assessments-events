@@ -2,7 +2,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ template "app.fullname" . }}
+  name: {{ template "app.name" . }}
   labels:
     {{- include "app.labels" . | nindent 4 }}
 spec:

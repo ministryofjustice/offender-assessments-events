@@ -17,7 +17,7 @@ ingress:
   path: /
 
 cronjob:
-  enabled: false
+  enabled: true
 
 env:
   JAVA_OPTS: "-Xmx512m"
