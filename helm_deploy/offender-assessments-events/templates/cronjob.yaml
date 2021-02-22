@@ -1,0 +1,34 @@
+{{- if .Values.cronjob.enabled -}}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "app.name" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    metadata:
+      labels:
+        cron-job: trigger-events-update
+    spec:
+      backoffLimit: 3
+      activeDeadlineSeconds: 30
+      template:
+        metadata:
+          labels:
+            cron-job: trigger-events-update
+        spec:
+          containers:
+          - name: trigger-events-update
+            image: radial/busyboxplus:curl
+            imagePullPolicy: IfNotPresent
+            args:
+            - /bin/sh
+            - -c
+            - curl {{ template "app.fullname" . }}:{{ .Values.image.port }}/events
+          restartPolicy: OnFailure
+{{- end }}
