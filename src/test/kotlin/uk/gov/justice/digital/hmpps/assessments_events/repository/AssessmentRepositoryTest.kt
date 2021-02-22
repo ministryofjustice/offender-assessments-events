@@ -40,7 +40,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
   @Test
   fun `returns only completed status events after date completed`() {
 
-    val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusOrderByDateCompleted(
+    val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(
       LocalDateTime.of(
         2015,
         1,

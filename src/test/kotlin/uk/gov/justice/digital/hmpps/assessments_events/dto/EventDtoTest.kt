@@ -46,7 +46,7 @@ class EventDtoTest {
     private const val setPk = 4L
     const val offenderPk = 25L
     const val offenderPNC = "ABC"
-    const val assessmentType = "magic"
+    const val assessmentType = "type"
     const val assessmentStatus = "pending"
     val timeCompleted: LocalDateTime = LocalDateTime.now()
 

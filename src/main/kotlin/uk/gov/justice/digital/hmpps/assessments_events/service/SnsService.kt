@@ -30,7 +30,7 @@ class SnsService(awsSnsClient: AmazonSNS, @Value("\${sns.topic.arn}") val topicA
         objectMapper.writeValueAsString(eventDto),
         mapOf("eventType" to eventDto.eventType.value)
       )
-      log.info("Sent event to SNS topic")
+      log.info("Sent event with date ${eventDto.eventDate} to SNS topic")
     }
   }
 }
