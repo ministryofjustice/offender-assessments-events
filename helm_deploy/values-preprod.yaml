@@ -17,6 +17,9 @@ ingress:
       cert_secret: offender-assessments-events-dev-tls-secret
   path: /
 
+cronjob:
+  enabled: false
+
 env:
   JAVA_OPTS: "-Xmx512m"
   LAST_ACCESSED_EVENT_DIR: /tmp
