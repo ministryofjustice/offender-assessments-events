@@ -29,6 +29,6 @@ spec:
             args:
             - /bin/sh
             - -c
-            - curl {{ template "app.fullname" . }}:{{ .Values.image.port }}/events
+            - curl {{ template "app.fullname" . }}/events
           restartPolicy: OnFailure
 {{- end }}
