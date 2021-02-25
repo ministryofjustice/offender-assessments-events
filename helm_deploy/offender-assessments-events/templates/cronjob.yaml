@@ -2,7 +2,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ template "app.name" . }}
+  name: trigger-events-update
   labels:
     {{- include "app.labels" . | nindent 4 }}
 spec:
@@ -29,6 +29,6 @@ spec:
             args:
             - /bin/sh
             - -c
-            - curl {{ template "app.fullname" . }}/events
+            - curl --fail {{ template "app.fullname" . }}/events
           restartPolicy: OnFailure
 {{- end }}
