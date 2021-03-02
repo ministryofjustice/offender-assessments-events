@@ -9,22 +9,9 @@ image:
   tag: latest
   port: 8080
 
-ingress:
-  enabled: true
-  enable_whitelist: true
-  hosts:
-    - host: assess-event-prd.aks-dev-1.studio-hosting.service.justice.gov.uk
-      cert_secret: offender-assessments-events-dev-tls-secret
-  path: /
-
 cronjob:
   enabled: false
 
 env:
   JAVA_OPTS: "-Xmx512m"
   LAST_ACCESSED_EVENT_DIR: /tmp
-
-whitelist:
-  # office: "217.33.148.210/32"
-  # health-kick: "35.177.252.195/32"
-  # mojvpn: "81.134.202.29/32"

@@ -18,9 +18,6 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
   implementation("org.springframework.data:spring-data-relational:2.1.1")
 
-  implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-
   implementation("org.springframework.cloud:spring-cloud-starter-aws-messaging:2.2.4.RELEASE")
 
   implementation("org.springdoc:springdoc-openapi-ui:1.4.7")
