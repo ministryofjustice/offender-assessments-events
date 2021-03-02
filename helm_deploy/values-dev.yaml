@@ -9,13 +9,6 @@ image:
   tag: latest
   port: 8080
 
-ingress:
-  enabled: true
-  hosts:
-    - host: assess-event-dev.aks-dev-1.studio-hosting.service.justice.gov.uk
-      cert_secret: offender-assessments-events-dev-tls-secret
-  path: /
-
 cronjob:
   enabled: true
 

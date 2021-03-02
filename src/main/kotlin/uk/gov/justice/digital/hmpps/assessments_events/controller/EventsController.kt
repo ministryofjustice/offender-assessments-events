@@ -17,7 +17,6 @@ class EventsController(val eventsService: EventsService) {
   @Operation(description = "Triggers the fetching of new events from OASys and then puts them on a SNS topic")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "401", description = "Invalid JWT Token"),
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
@@ -29,7 +28,6 @@ class EventsController(val eventsService: EventsService) {
   @Operation(description = "Triggers the fetching of new events since the given date from OASys and then puts them on a SNS topic")
   @ApiResponses(
     value = [
-      ApiResponse(responseCode = "401", description = "Invalid JWT Token"),
       ApiResponse(responseCode = "200", description = "OK")
     ]
   )
