@@ -53,3 +53,17 @@ helm upgrade [release name] [path to chart]. \
   --values values-dev.yaml \
   --values example-secrets.yaml
 ```
+
+### Ingress TLS certificate
+
+Ensure a certificate definition exists in the cloud-platform-environments repo under the relevant namespaces folder:
+
+e.g.
+
+```sh
+cloud-platform-environments/namespaces/live-1.cloud-platform.service.justice.gov.uk/[INSERT NAMESPACE NAME]/05-certificate.yaml
+```
+
+Ensure the certificate is created and ready for use.
+
+The name of the kubernetes secret where the certificate is stored is used as a value to the helm chart - this is used to configured the ingress.

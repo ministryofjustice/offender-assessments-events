@@ -7,14 +7,6 @@ import org.springframework.test.context.ActiveProfiles
 class EventsControllerTest : IntegrationTestBase() {
 
   @Test
-  fun `access forbidden when no authority`() {
-    webTestClient.get().uri("/events")
-      .header("Content-Type", "application/json")
-      .exchange()
-      .expectStatus().isUnauthorized
-  }
-
-  @Test
   fun `trigger events endpoint`() {
     webTestClient.post().uri("/events")
       .exchange()
