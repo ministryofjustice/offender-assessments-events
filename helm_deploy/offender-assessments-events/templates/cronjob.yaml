@@ -29,6 +29,6 @@ spec:
             args:
             - /bin/sh
             - -c
-            - curl --verbose http://offender-assessments-events.offender-assessments-events-dev.svc.cluster.local/events
+            - http_status=$( curl -v -w '%{http_code}' http://offender-assessments-events.offender-assessments-events-dev.svc.cluster.local/events ); if [[ $http_status -eq 200 ]]; then exit 0; else exit 1; fi
           restartPolicy: OnFailure
 {{- end }}
