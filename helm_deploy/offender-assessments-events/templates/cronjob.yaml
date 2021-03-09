@@ -29,6 +29,6 @@ spec:
             args:
             - /bin/sh
             - -c
-            - curl -s -v --fail http://{{ template "app.fullname" . }}/events
+            - curl --verbose --show-error  --fail http://{{ template "app.fullname" . }}/events
           restartPolicy: OnFailure
 {{- end }}
