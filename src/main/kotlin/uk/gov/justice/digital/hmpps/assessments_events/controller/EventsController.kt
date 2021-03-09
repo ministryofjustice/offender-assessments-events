@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @RestController
 class EventsController(val eventsService: EventsService) {
 
-  @RequestMapping(path = ["/events"], method = [RequestMethod.POST])
+  @RequestMapping(path = ["/events"], method = [RequestMethod.GET])
   @Operation(description = "Triggers the fetching of new events from OASys and then puts them on a SNS topic")
   @ApiResponses(
     value = [
@@ -24,7 +24,7 @@ class EventsController(val eventsService: EventsService) {
     return eventsService.sendNewEventsToTopic()
   }
 
-  @RequestMapping(path = ["/events/date/{date}"], method = [RequestMethod.POST])
+  @RequestMapping(path = ["/events/date/{date}"], method = [RequestMethod.GET])
   @Operation(description = "Triggers the fetching of new events since the given date from OASys and then puts them on a SNS topic")
   @ApiResponses(
     value = [

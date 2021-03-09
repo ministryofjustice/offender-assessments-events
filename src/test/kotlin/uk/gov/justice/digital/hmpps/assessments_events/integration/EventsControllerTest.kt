@@ -8,7 +8,7 @@ class EventsControllerTest : IntegrationTestBase() {
 
   @Test
   fun `trigger events endpoint`() {
-    webTestClient.post().uri("/events")
+    webTestClient.get().uri("/events")
       .exchange()
       .expectStatus().isOk
   }
@@ -16,7 +16,7 @@ class EventsControllerTest : IntegrationTestBase() {
   @Test
   fun `trigger events endpoint with date`() {
     val date = "2021-02-12T09:46:08.004"
-    webTestClient.post().uri("/events/date/$date")
+    webTestClient.get().uri("/events/date/$date")
       .exchange()
       .expectStatus().isOk
   }
