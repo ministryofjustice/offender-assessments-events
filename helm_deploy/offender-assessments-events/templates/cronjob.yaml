@@ -29,7 +29,7 @@ spec:
             args:
             - /bin/sh
             - -c
-            - http_status=$( curl -v -H "Content-Type: application/json" -w '%{http_code}' http://offender-assessments-events.offender-assessments-events-dev.svc.cluster.local/events )
-            - echo ${http_status}
+            - http_status=$( curl -v -w '%{http_code}' http://offender-assessments-events.offender-assessments-events-dev.svc.cluster.local/events ); if [[ $http_status -eq 200 ]]; then exit 0; else exit 1; fi
+            - echo $(http_status)
           restartPolicy: OnFailure
 {{- end }}
