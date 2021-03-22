@@ -15,8 +15,5 @@ spring:
       hibernate:
         show_sql: false
 
-    profiles:
-      include: logstash
-
   flyway:
     enabled: false
