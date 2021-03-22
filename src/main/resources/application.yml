@@ -14,6 +14,10 @@ spring:
     date-format: "yyyy-MM-dd HH:mm:ss"
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
+  profiles:
+    group:
+      test: stdout
+      oracle: logstash
 
 server:
   port: 8080
