@@ -1,6 +1,6 @@
 {
   "role": {
-    "name": "offender-case-notes"
+    "name": "offender-assessments-events"
   },
   "customDimensions": {
     "service.version": "${BUILD_NUMBER}"
