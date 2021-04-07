@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: 'jdbc:h2:mem:testdb;Mode=Oracle'
+  h2:
+    console:
+      enabled: true
+  flyway:
+    enabled: false
+
+graceful:
+  shutdown:
+    enabled: false
+
+sns:
+  topic:
+    arn: arn:aws:sns:eu-west-2:000000000000:offender_assessments_events
+  endpoint:
+    url: http://localhost:4575
+  provider: localstack
+  region: eu-west-2
+
+sqs:
+  queue.name: test_queue
+  endpoint.url: http://localhost:4576
