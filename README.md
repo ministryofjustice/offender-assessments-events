@@ -22,6 +22,10 @@ From the command line run:
  docker-compose up 
 ```
 
+**If the LocalStack instance comes up but is missing SNS resources**
+
+Run the script `./src/test/resources/localstack/setup-sns.sh` to create the AWS resources in LocalStack
+
 ### Build service and run tests
 
 This service is built using Gradle. In order to build the project from the command line and run the tests, you require LocalStack to be running, and use:
@@ -59,18 +63,18 @@ The generated documentation for the api can be viewed at http://localhost:8080/s
 
 ### Health
 
-- `/ping`: will respond `pong` to all requests.  This should be used by dependent systems to check connectivity to   
-  offender assessment service, rather than calling the `/health` endpoint.
+- `/health/ping`: will respond with the application status to all requests. This should be used by dependent systems to check connectivity to   
+  this service, rather than calling the `/health` endpoint.
 - `/health`: provides information about the application health and its dependencies.  This should only be used  
-  by offender assessment service health monitoring (e.g. pager duty) and not other systems who wish to find out the   
-  state of offender assessment service.
+  by health monitoring (e.g. pager duty) and not other systems who wish to find out the   
+  state of this service.
 - `/info`: provides information about the version of deployed application.
 
 #### Health and info Endpoints (curl)
 
-##### Application info
+##### Application ping
 ```  
-curl -X GET http://localhost:8080/info  
+curl -X GET http://localhost:8080/health/ping  
 ```
 
 ##### Application health
@@ -78,9 +82,9 @@ curl -X GET http://localhost:8080/info
 curl -X GET http://localhost:8080/health  
 ```
 
-##### Application ping
+##### Application info
 ```  
-curl -X GET http://localhost:8080/ping  
+curl -X GET http://localhost:8080/info  
 ```
 
 ## Using the api
