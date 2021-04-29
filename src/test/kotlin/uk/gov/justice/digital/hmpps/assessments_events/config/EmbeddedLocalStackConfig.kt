@@ -20,7 +20,7 @@ class EmbeddedLocalStackConfig {
   fun localStackContainer(): LocalStackContainer {
     log.info("Starting localstack...")
     val logConsumer = Slf4jLogConsumer(log).withPrefix("localstack")
-    val localStackContainer = LocalStackContainer(DockerImageName.parse("localstack/localstack").withTag("0.10.5"))
+    val localStackContainer = LocalStackContainer(DockerImageName.parse("localstack/localstack").withTag("0.11.2"))
       .withServices(LocalStackContainer.Service.SQS, LocalStackContainer.Service.SNS)
       .withClasspathResourceMapping(
         "/localstack/setup-sns.sh",

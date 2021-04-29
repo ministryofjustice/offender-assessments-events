@@ -5,10 +5,10 @@ orbs:
   hmpps: ministryofjustice/hmpps@3.0
 
 executors:
-  machine:
+  validator:
     docker:
       - image: circleci/openjdk:11-jdk
-      - image: localstack/localstack:0.10.5
+      - image: localstack/localstack:0.11.2
         environment:
           - SERVICES=sqs,sns
           - DEBUG=${DEBUG- }
@@ -25,7 +25,7 @@ executors:
 
 jobs:
   validate:
-    executor: machine
+    executor: validator
     steps:
       - checkout
       - hmpps/install_aws_cli
