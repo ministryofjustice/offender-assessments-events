@@ -5,7 +5,6 @@ import com.amazonaws.services.sns.AmazonSNSClientBuilder
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.AmazonSQSAsync
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
@@ -15,6 +14,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.testcontainers.containers.BindMode
 import org.testcontainers.containers.localstack.LocalStackContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -59,28 +59,11 @@ abstract class IntegrationTestBase {
 
   companion object {
     @Container
-    internal val localStack = LocalStackContainer(DockerImageName.parse("localstack/localstack:0.10.5"))
+    internal val localStack = LocalStackContainer(DockerImageName.parse("localstack/localstack:0.11.2"))
       .withServices(LocalStackContainer.Service.SNS, LocalStackContainer.Service.SQS)
+      .withClasspathResourceMapping("/localstack/setup-sns.sh", "/docker-entrypoint-initaws.d/setup-sns.sh", BindMode.READ_WRITE)
+      .withEnv("HOSTNAME_EXTERNAL", "localhost")
       .withEnv("DEFAULT_REGION", "eu-west-2")
       .withReuse(true)
-
-    @BeforeAll
-    @JvmStatic
-    fun beforeAll() {
-      localStack.execInContainer("awslocal", "sns", "create-topic", "--name", "offender_assessments_events")
-      localStack.execInContainer("awslocal", "sqs", "create-queue", "--queue-name", "test_queue")
-      localStack.execInContainer(
-        "awslocal",
-        "--endpoint-url=http://localhost:4575",
-        "sns",
-        "subscribe",
-        "--topic-arn",
-        "arn:aws:sns:eu-west-2:000000000000:offender_assessments_events",
-        "--protocol",
-        "sqs",
-        "--notification-endpoint",
-        "http://localhost:4576/queue/test_queue"
-      )
-    }
   }
 }
