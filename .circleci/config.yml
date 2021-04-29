@@ -6,7 +6,8 @@ orbs:
 
 executors:
   validator:
-    machine: true
+    machine:
+      image: ubuntu-2004:202008-01
     environment:
       _JAVA_OPTIONS: -Xmx256m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-XX:+UseContainerSupport
     working_directory: ~/app
@@ -17,7 +18,6 @@ jobs:
     executor: validator
     steps:
       - checkout
-      - hmpps/install_aws_cli
       - restore_cache:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
