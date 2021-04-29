@@ -7,6 +7,7 @@ import com.amazonaws.services.sqs.AmazonSQSAsync
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.context.TestConfiguration
@@ -33,6 +34,7 @@ abstract class IntegrationTestBase {
   internal class AwsTestConfig {
     @Bean
     @Primary
+    @ConditionalOnProperty(name = ["sns.provider"], havingValue = "localstack")
     fun awsSnsClient(): AmazonSNS {
       return AmazonSNSClientBuilder.standard()
         .withCredentials(localStack.defaultCredentialsProvider)
@@ -42,6 +44,7 @@ abstract class IntegrationTestBase {
 
     @Bean
     @Primary
+    @ConditionalOnProperty(name = ["sns.provider"], havingValue = "localstack")
     fun awsSqsClient(): AmazonSQSAsync {
       return AmazonSQSAsyncClientBuilder.standard()
         .withCredentials(localStack.defaultCredentialsProvider)
