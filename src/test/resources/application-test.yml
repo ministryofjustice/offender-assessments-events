@@ -19,6 +19,15 @@ management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
 
+cloud:
+  aws:
+    region:
+      static: eu-west-2
+    stack:
+      auto: false
+    credentials:
+      secretKey: ABC
+      accessKey: XYZ
 sns:
   topic:
     arn: arn:aws:sns:eu-west-2:000000000000:offender_assessments_events
