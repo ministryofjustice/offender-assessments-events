@@ -22,18 +22,17 @@ import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType
 import uk.gov.justice.digital.hmpps.assessments_events.entity.Assessment
 import uk.gov.justice.digital.hmpps.assessments_events.entity.AssessmentGroup
 import uk.gov.justice.digital.hmpps.assessments_events.entity.Offender
-import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.assessments_events.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEventHelper
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("Event Service tests")
-internal class EventServiceTest : IntegrationTestBase() {
+internal class EventServiceTest {
 
-  private final val assessmentRepository: AssessmentRepository = mockk()
-  private final val lastAccessedEventHelper: LastAccessedEventHelper = mockk()
-  private final val snsService: SnsService = mockk()
+  private val assessmentRepository: AssessmentRepository = mockk()
+  private val lastAccessedEventHelper: LastAccessedEventHelper = mockk()
+  private val snsService: SnsService = mockk()
 
   private val eventsService = EventsService(assessmentRepository, lastAccessedEventHelper, snsService)
 
