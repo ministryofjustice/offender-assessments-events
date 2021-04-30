@@ -1,7 +1,8 @@
-package uk.gov.justice.digital.hmpps.assessments_events.integration
+package uk.gov.justice.digital.hmpps.assessments_events.integration.controller
 
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
 
 @ActiveProfiles("test")
 class EventsControllerTest : IntegrationTestBase() {

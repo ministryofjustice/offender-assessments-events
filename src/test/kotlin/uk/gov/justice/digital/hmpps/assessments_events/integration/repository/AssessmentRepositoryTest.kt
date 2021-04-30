@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessments_events.repository
+package uk.gov.justice.digital.hmpps.assessments_events.integration.repository
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.assessments_events.entity.Assessment
 import uk.gov.justice.digital.hmpps.assessments_events.entity.AssessmentGroup
 import uk.gov.justice.digital.hmpps.assessments_events.entity.Offender
 import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.assessments_events.repository.AssessmentRepository
 import java.time.LocalDateTime
 
 @SqlGroup(

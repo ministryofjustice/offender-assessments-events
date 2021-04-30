@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessments_events.config
+package uk.gov.justice.digital.hmpps.assessments_events.integration.config
 
 import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.AmazonSNSClientBuilder

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessments_events.service
+package uk.gov.justice.digital.hmpps.assessments_events.integration.service
 
 import com.amazonaws.services.sqs.model.PurgeQueueRequest
 import com.microsoft.applicationinsights.core.dependencies.google.gson.GsonBuilder
