@@ -7,7 +7,7 @@ orbs:
 executors:
   validator:
     machine:
-      image: ubuntu-1604:202007-01
+      image: ubuntu-2004:202101-01
     environment:
       _JAVA_OPTIONS: -Xmx256m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-XX:+UseContainerSupport
     working_directory: ~/app
@@ -17,13 +17,6 @@ jobs:
   validate:
     executor: validator
     steps:
-      - run:
-          name: Install OpenJDK 11
-          command: |
-            sudo apt-get update && sudo apt-get install openjdk-11-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
-            java -version
       - checkout
       - restore_cache:
           keys:
