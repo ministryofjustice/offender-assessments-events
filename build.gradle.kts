@@ -30,4 +30,7 @@ dependencies {
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.ninja-squad:springmockk:3.0.1")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
+  testImplementation("org.testcontainers:junit-jupiter:1.15.3")
+  testImplementation("org.testcontainers:localstack:1.15.3")
+  testImplementation("org.awaitility:awaitility:4.0.3")
 }

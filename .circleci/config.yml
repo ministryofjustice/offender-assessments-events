@@ -6,18 +6,8 @@ orbs:
 
 executors:
   validator:
-    docker:
-      - image: circleci/openjdk:11-jdk
-      - image: localstack/localstack:0.10.5
-        environment:
-          - SERVICES=sqs,sns
-          - DEBUG=${DEBUG- }
-          - DATA_DIR=/tmp/localstack/data
-          - DOCKER_HOST=unix:///var/run/docker.sock
-          - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
-          - AWS_EXECUTION_ENV=True
-          - DEFAULT_REGION=eu-west-2
-          - TMPDIR=/private
+    machine:
+      image: ubuntu-2004:202101-01
     environment:
       _JAVA_OPTIONS: -Xmx256m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-XX:+UseContainerSupport
     working_directory: ~/app
@@ -28,18 +18,6 @@ jobs:
     executor: validator
     steps:
       - checkout
-      - hmpps/install_aws_cli
-      - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
-      - run:
-          name: Wait for localstack
-          command: dockerize -wait tcp://localhost:4575 -timeout 2m
-      - run:
-          name: Set up topic
-          command: src/test/resources/localstack/setup-sns.sh
       - restore_cache:
           keys:
             - gradle-{{ checksum "build.gradle.kts" }}
