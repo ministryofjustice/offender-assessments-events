@@ -35,9 +35,10 @@ class LastAccessedEventHelper constructor(
 
   private fun checkLastAccessedEventFile() {
     val file = File(fileLocation)
+    // TODO : decide if we need to recreate the same file or just use it if it exists
     val newFile = file.createNewFile()
-    if (newFile) {
+    /*if (newFile) {
       saveLastAccessedEvent(LocalDateTime.now().minusDays(7))
-    }
+    }*/
   }
 }

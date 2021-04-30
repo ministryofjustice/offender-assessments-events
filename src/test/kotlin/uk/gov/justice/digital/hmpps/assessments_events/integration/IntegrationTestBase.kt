@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import uk.gov.justice.digital.hmpps.assessments_events.service.EventsService
 import uk.gov.justice.digital.hmpps.assessments_events.service.SnsService
 import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEventHelper
 
@@ -22,6 +23,9 @@ abstract class IntegrationTestBase {
 
   @Autowired
   lateinit var snsService: SnsService
+
+  @Autowired
+  lateinit var eventsService: EventsService
 
   @Autowired
   lateinit var queueUrl: String
