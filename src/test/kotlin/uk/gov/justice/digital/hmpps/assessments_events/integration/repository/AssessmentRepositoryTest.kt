@@ -49,7 +49,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
   @Test
   fun `returns only completed status events after date completed`() {
 
-    val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(
+    val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
       LocalDateTime.of(
         2015,
         1,
@@ -57,7 +57,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
         1,
         1
       ),
-      "COMPLETE"
+      setOf("COMPLETE")
     )
 
     assertThat(eventEntities).hasSize(1)
@@ -67,7 +67,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
   @Test
   fun `returns only guillotined status events after date completed`() {
 
-    val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(
+    val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
       LocalDateTime.of(
         2015,
         1,
@@ -75,7 +75,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
         1,
         1
       ),
-      "GUILLOTINED"
+      setOf("GUILLOTINED")
     )
 
     assertThat(eventEntities).hasSize(2)

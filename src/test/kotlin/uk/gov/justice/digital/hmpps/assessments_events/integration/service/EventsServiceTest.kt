@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessments_events.integration.service
 
+import com.amazonaws.services.sqs.model.Message
 import com.amazonaws.services.sqs.model.PurgeQueueRequest
 import com.microsoft.applicationinsights.core.dependencies.google.gson.GsonBuilder
 import com.microsoft.applicationinsights.core.dependencies.google.gson.JsonDeserializer
@@ -56,17 +57,21 @@ class EventsServiceTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Should send and receive one completed assessment`() {
+  fun `Should send and receive two guillotined assessments and one completed assessment`() {
 
     eventsService.sendNewEventsToTopic()
 
-    await.atMost(Duration.ofSeconds(20)) untilCallTo {
-      awsSqsClient.receiveMessage(queueUrl).messages
+    var allMessages = listOf<Message>()
+    await.atMost(Duration.ofSeconds(5)) untilCallTo {
+      while (allMessages.size < 3) {
+        allMessages = listOf(allMessages, awsSqsClient.receiveMessage(queueUrl).messages).flatten()
+      }
+      allMessages
         .map { message -> gson.fromJson(message.body, AWSMessage::class.java) }
         .map { awsMessage -> gson.fromJson(awsMessage.Message, EventDto::class.java) }
         .toList()
     } matches {
-      it?.containsAll(listOf(eventDto)) ?: false
+      it?.containsAll(listOf(assessmentGuillotined2, assessmentGuillotined, assessmentCompleted)) ?: false
     }
 
     assertThat(lastAccessedEvent.lastAccessedEvent()).isEqualTo(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
@@ -74,12 +79,28 @@ class EventsServiceTest : IntegrationTestBase() {
 
   data class AWSMessage(val Message: String)
 
-  val eventDto = EventDto(
+  val assessmentCompleted = EventDto(
     oasysOffenderPk = 1234L,
     offenderPNC = "PNC",
     assessmentType = "LAYER_3",
     assessmentStatus = "COMPLETE",
     eventDate = LocalDateTime.of(2018, 6, 20, 23, 0, 9),
     eventType = EventType.ASSESSMENT_COMPLETED
+  )
+  val assessmentGuillotined = EventDto(
+    oasysOffenderPk = 1234L,
+    offenderPNC = "PNC",
+    assessmentType = "LAYER_3",
+    assessmentStatus = "GUILLOTINED",
+    eventDate = LocalDateTime.of(2016, 7, 20, 10, 0, 9),
+    eventType = EventType.ASSESSMENT_GUILLOTINED
+  )
+  val assessmentGuillotined2 = EventDto(
+    oasysOffenderPk = 1234L,
+    offenderPNC = "PNC",
+    assessmentType = "LAYER_3",
+    assessmentStatus = "GUILLOTINED",
+    eventDate = LocalDateTime.of(2016, 7, 20, 2, 0, 9),
+    eventType = EventType.ASSESSMENT_GUILLOTINED
   )
 }
