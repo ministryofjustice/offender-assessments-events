@@ -33,7 +33,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
     val eventEntities =
       assessmentRepository.findByDateCompletedAfterOrderByDateCompleted(LocalDateTime.of(2017, 1, 1, 1, 1))
     assertThat(eventEntities).hasSize(1)
-    assertThat(eventEntities).isEqualTo(listOf(assessment2018))
+    assertThat(eventEntities).isEqualTo(listOf(completedAssessment2018))
   }
 
   @Test
@@ -43,7 +43,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
       assessmentRepository.findByDateCompletedAfterOrderByDateCompleted(LocalDateTime.of(2016, 7, 20, 2, 0, 9))
     assertThat(eventEntities).hasSize(2)
     assertThat(eventEntities).element(0).isEqualTo(guillotinedAssessment20162)
-    assertThat(eventEntities).element(1).isEqualTo(assessment2018)
+    assertThat(eventEntities).element(1).isEqualTo(completedAssessment2018)
   }
 
   @Test
@@ -61,11 +61,11 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
     )
 
     assertThat(eventEntities).hasSize(1)
-    assertThat(eventEntities).isEqualTo(listOf(assessment2018))
+    assertThat(eventEntities).isEqualTo(listOf(completedAssessment2018))
   }
 
   @Test
-  fun `returns only guillotined status events after date completed`() {
+  fun `returns completed and guillotined status events after date completed`() {
 
     val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
       LocalDateTime.of(
@@ -75,15 +75,19 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
         1,
         1
       ),
-      setOf("GUILLOTINED")
+      setOf("COMPLETE", "GUILLOTINED")
     )
 
-    assertThat(eventEntities).hasSize(2)
-    assertThat(eventEntities).containsExactlyInAnyOrder(guillotinedAssessment20162, guillotinedAssessment2016)
+    assertThat(eventEntities).hasSize(3)
+    assertThat(eventEntities).containsExactlyInAnyOrder(
+      guillotinedAssessment20162,
+      guillotinedAssessment2016,
+      completedAssessment2018
+    )
   }
 
   companion object {
-    val assessment2018 = validCompletedAssessment(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
+    val completedAssessment2018 = validCompletedAssessment(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
     val assessment2016 = validCompletedAssessment(LocalDateTime.of(2016, 7, 20, 2, 0, 9))
     val guillotinedAssessment2016 = assessment2016.copy(oasysSetPk = 5434, assessmentStatus = "GUILLOTINED")
     val guillotinedAssessment20162 =
