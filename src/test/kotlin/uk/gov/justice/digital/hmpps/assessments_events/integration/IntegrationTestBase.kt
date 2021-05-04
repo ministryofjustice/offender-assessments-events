@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.assessments_events.integration
 
 import com.amazonaws.services.sqs.AmazonSQS
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -32,4 +33,7 @@ abstract class IntegrationTestBase {
 
   @Autowired
   lateinit var lastAccessedEvent: LastAccessedEventHelper
+
+  @Autowired
+  lateinit var objectMapper: ObjectMapper
 }

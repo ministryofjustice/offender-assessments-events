@@ -2,8 +2,7 @@ package uk.gov.justice.digital.hmpps.assessments_events.integration.service
 
 import com.amazonaws.services.sqs.model.Message
 import com.amazonaws.services.sqs.model.PurgeQueueRequest
-import com.microsoft.applicationinsights.core.dependencies.google.gson.GsonBuilder
-import com.microsoft.applicationinsights.core.dependencies.google.gson.JsonDeserializer
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.matches
@@ -19,7 +18,6 @@ import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType
 import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @SqlGroup(
   Sql(
@@ -33,15 +31,6 @@ import java.time.format.DateTimeFormatter
   )
 )
 class EventsServiceTest : IntegrationTestBase() {
-  private val gson = GsonBuilder().registerTypeAdapter(
-    LocalDateTime::class.java,
-    JsonDeserializer { json, _, _ ->
-      LocalDateTime.parse(
-        json.asJsonPrimitive.asString,
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-      )
-    }
-  ).create()
 
   var lastAccessedDateTime: LocalDateTime = LocalDateTime.of(2016, 6, 20, 23, 0, 9)
 
@@ -67,17 +56,20 @@ class EventsServiceTest : IntegrationTestBase() {
         allMessages = listOf(allMessages, awsSqsClient.receiveMessage(queueUrl).messages).flatten()
       }
       allMessages
-        .map { message -> gson.fromJson(message.body, AWSMessage::class.java) }
-        .map { awsMessage -> gson.fromJson(awsMessage.Message, EventDto::class.java) }
+        .map { message -> objectMapper.readValue(message.body, AWSMessage::class.java) }
+        .map { awsMessage -> objectMapper.readValue(awsMessage.message, EventDto::class.java) }
         .toList()
     } matches {
+      println(it)
       it?.containsAll(listOf(assessmentGuillotined2, assessmentGuillotined, assessmentCompleted)) ?: false
     }
-
     assertThat(lastAccessedEvent.lastAccessedEvent()).isEqualTo(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
   }
 
-  data class AWSMessage(val Message: String)
+  data class AWSMessage(
+    @JsonProperty("Message")
+    val message: String
+  )
 
   val assessmentCompleted = EventDto(
     oasysOffenderPk = 1234L,
