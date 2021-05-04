@@ -40,8 +40,3 @@ data class Assessment(
     return 31
   }
 }
-
-enum class AssessmentStatusType(val value: String) {
-  COMPLETE("COMPLETE"),
-  GUILLOTINED("GUILLOTINED")
-}

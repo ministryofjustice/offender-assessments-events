@@ -4,8 +4,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.assessments_events.dto.EventDto
+import uk.gov.justice.digital.hmpps.assessments_events.dto.StatusType
 import uk.gov.justice.digital.hmpps.assessments_events.entity.Assessment
-import uk.gov.justice.digital.hmpps.assessments_events.entity.AssessmentStatusType
 import uk.gov.justice.digital.hmpps.assessments_events.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEventHelper
 import java.time.LocalDateTime
@@ -42,7 +42,7 @@ class EventsService(
     log.info("Getting new events since date: $date")
     val assessments = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
       date,
-      setOf(AssessmentStatusType.COMPLETE.value, AssessmentStatusType.GUILLOTINED.value)
+      setOf(StatusType.COMPLETE.value, StatusType.GUILLOTINED.value)
     )
     log.info("Found ${assessments.size} new events.")
     return assessments.sortedBy { it.dateCompleted }

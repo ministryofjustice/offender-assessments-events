@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.assessments_events.dto
 
 import uk.gov.justice.digital.hmpps.assessments_events.entity.Assessment
-import uk.gov.justice.digital.hmpps.assessments_events.entity.AssessmentStatusType
 import java.time.LocalDateTime
 
 data class EventDto(
@@ -22,8 +21,8 @@ data class EventDto(
         assessmentStatus = assessment.assessmentStatus,
         eventDate = assessment.dateCompleted,
         eventType = when (assessment.assessmentStatus) {
-          AssessmentStatusType.COMPLETE.value -> EventType.ASSESSMENT_COMPLETED
-          AssessmentStatusType.GUILLOTINED.value -> EventType.ASSESSMENT_GUILLOTINED
+          StatusType.COMPLETE.value -> EventType.ASSESSMENT_COMPLETED
+          StatusType.GUILLOTINED.value -> EventType.ASSESSMENT_GUILLOTINED
           else -> EventType.ASSESSMENT_COMPLETED
         }
       )
@@ -34,4 +33,9 @@ data class EventDto(
 enum class EventType(val value: String) {
   ASSESSMENT_COMPLETED("ASSESSMENT_COMPLETED"),
   ASSESSMENT_GUILLOTINED("ASSESSMENT_GUILLOTINED")
+}
+
+enum class StatusType(val value: String) {
+  COMPLETE("COMPLETE"),
+  GUILLOTINED("GUILLOTINED")
 }
