@@ -60,7 +60,6 @@ class EventsServiceTest : IntegrationTestBase() {
         .map { awsMessage -> objectMapper.readValue(awsMessage.message, EventDto::class.java) }
         .toList()
     } matches {
-      println(it)
       it?.containsAll(listOf(assessmentGuillotined2, assessmentGuillotined, assessmentCompleted)) ?: false
     }
     assertThat(lastAccessedEvent.lastAccessedEvent()).isEqualTo(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
