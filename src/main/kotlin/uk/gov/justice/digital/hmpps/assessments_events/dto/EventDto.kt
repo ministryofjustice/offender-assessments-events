@@ -20,12 +20,22 @@ data class EventDto(
         assessmentType = assessment.assessmentType,
         assessmentStatus = assessment.assessmentStatus,
         eventDate = assessment.dateCompleted,
-        eventType = EventType.ASSESSMENT_COMPLETED
+        eventType = when (assessment.assessmentStatus) {
+          StatusType.COMPLETE.value -> EventType.ASSESSMENT_COMPLETED
+          StatusType.GUILLOTINED.value -> EventType.ASSESSMENT_GUILLOTINED
+          else -> EventType.ASSESSMENT_COMPLETED
+        }
       )
     }
   }
 }
 
 enum class EventType(val value: String) {
-  ASSESSMENT_COMPLETED("ASSESSMENT_COMPLETED")
+  ASSESSMENT_COMPLETED("ASSESSMENT_COMPLETED"),
+  ASSESSMENT_GUILLOTINED("ASSESSMENT_GUILLOTINED")
+}
+
+enum class StatusType(val value: String) {
+  COMPLETE("COMPLETE"),
+  GUILLOTINED("GUILLOTINED")
 }

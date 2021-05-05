@@ -32,5 +32,5 @@ dependencies {
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:junit-jupiter:1.15.3")
   testImplementation("org.testcontainers:localstack:1.15.3")
-  testImplementation("org.awaitility:awaitility:4.0.3")
+  testImplementation("org.awaitility:awaitility-kotlin:4.0.3")
 }

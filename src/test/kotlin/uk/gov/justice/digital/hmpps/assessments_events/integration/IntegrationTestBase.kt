@@ -1,11 +1,13 @@
 package uk.gov.justice.digital.hmpps.assessments_events.integration
 
 import com.amazonaws.services.sqs.AmazonSQS
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import uk.gov.justice.digital.hmpps.assessments_events.service.EventsService
 import uk.gov.justice.digital.hmpps.assessments_events.service.SnsService
 import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEventHelper
 
@@ -24,8 +26,14 @@ abstract class IntegrationTestBase {
   lateinit var snsService: SnsService
 
   @Autowired
+  lateinit var eventsService: EventsService
+
+  @Autowired
   lateinit var queueUrl: String
 
   @Autowired
   lateinit var lastAccessedEvent: LastAccessedEventHelper
+
+  @Autowired
+  lateinit var objectMapper: ObjectMapper
 }

@@ -10,8 +10,8 @@ interface AssessmentRepository : JpaRepository<Assessment, Long> {
 
   fun findByDateCompletedAfterOrderByDateCompleted(dateCompleted: LocalDateTime): List<Assessment>
 
-  fun findByDateCompletedAfterAndAssessmentStatus(
+  fun findByDateCompletedAfterAndAssessmentStatusIn(
     dateCompleted: LocalDateTime,
-    assessmentStatus: String
+    assessmentStatuses: Set<String>
   ): Collection<Assessment>
 }

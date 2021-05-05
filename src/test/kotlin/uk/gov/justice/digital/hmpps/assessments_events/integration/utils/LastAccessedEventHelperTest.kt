@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.assessments_events.utils
+package uk.gov.justice.digital.hmpps.assessments_events.integration.utils
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

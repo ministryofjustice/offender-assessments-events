@@ -40,3 +40,7 @@ sqs:
   queue.name: test_queue
   endpoint.url: http://localhost:4576
   provider: localstack
+
+last-accessed-event-dir: "./src/test/resources"
+last-accessed-value:
+  file: "${last-accessed-event-dir}/last-accessed-test.properties"
