@@ -46,7 +46,7 @@ class EventsServiceTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Should send and receive two guillotined assessments and one completed assessment`() {
+  fun `Should send and receive two locked_incomplete assessments and one completed assessment`() {
 
     eventsService.sendNewEventsToTopic()
 
@@ -60,7 +60,7 @@ class EventsServiceTest : IntegrationTestBase() {
         .map { awsMessage -> objectMapper.readValue(awsMessage.message, EventDto::class.java) }
         .toList()
     } matches {
-      it?.containsAll(listOf(assessmentGuillotined2, assessmentGuillotined, assessmentCompleted)) ?: false
+      it?.containsAll(listOf(assessmentLockedIncomplete2, assessmentLockedIncomplete, assessmentCompleted)) ?: false
     }
     assertThat(lastAccessedEvent.lastAccessedEvent()).isEqualTo(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
   }
@@ -78,20 +78,20 @@ class EventsServiceTest : IntegrationTestBase() {
     eventDate = LocalDateTime.of(2018, 6, 20, 23, 0, 9),
     eventType = EventType.ASSESSMENT_COMPLETED
   )
-  val assessmentGuillotined = EventDto(
+  val assessmentLockedIncomplete = EventDto(
     oasysOffenderPk = 1234L,
     offenderPNC = "PNC",
     assessmentType = "LAYER_3",
-    assessmentStatus = "GUILLOTINED",
+    assessmentStatus = "LOCKED_INCOMPLETE",
     eventDate = LocalDateTime.of(2016, 7, 20, 10, 0, 9),
-    eventType = EventType.ASSESSMENT_GUILLOTINED
+    eventType = EventType.ASSESSMENT_LOCKED_INCOMPLETE
   )
-  val assessmentGuillotined2 = EventDto(
+  val assessmentLockedIncomplete2 = EventDto(
     oasysOffenderPk = 1234L,
     offenderPNC = "PNC",
     assessmentType = "LAYER_3",
-    assessmentStatus = "GUILLOTINED",
+    assessmentStatus = "LOCKED_INCOMPLETE",
     eventDate = LocalDateTime.of(2016, 7, 20, 2, 0, 9),
-    eventType = EventType.ASSESSMENT_GUILLOTINED
+    eventType = EventType.ASSESSMENT_LOCKED_INCOMPLETE
   )
 }

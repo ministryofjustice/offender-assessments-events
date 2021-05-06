@@ -42,7 +42,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
     val eventEntities =
       assessmentRepository.findByDateCompletedAfterOrderByDateCompleted(LocalDateTime.of(2016, 7, 20, 2, 0, 9))
     assertThat(eventEntities).hasSize(2)
-    assertThat(eventEntities).element(0).isEqualTo(guillotinedAssessment20162)
+    assertThat(eventEntities).element(0).isEqualTo(lockedIncompleteAssessment20162)
     assertThat(eventEntities).element(1).isEqualTo(completedAssessment2018)
   }
 
@@ -65,7 +65,7 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
   }
 
   @Test
-  fun `returns completed and guillotined status events after date completed`() {
+  fun `returns completed and locked_incomplete status events after date completed`() {
 
     val eventEntities = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
       LocalDateTime.of(
@@ -75,13 +75,13 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
         1,
         1
       ),
-      setOf("COMPLETE", "GUILLOTINED")
+      setOf("COMPLETE", "LOCKED_INCOMPLETE")
     )
 
     assertThat(eventEntities).hasSize(3)
     assertThat(eventEntities).containsExactlyInAnyOrder(
-      guillotinedAssessment20162,
-      guillotinedAssessment2016,
+      lockedIncompleteAssessment20162,
+      lockedIncompleteAssessment2016,
       completedAssessment2018
     )
   }
@@ -89,9 +89,9 @@ class AssessmentRepositoryTest(@Autowired private val assessmentRepository: Asse
   companion object {
     val completedAssessment2018 = validCompletedAssessment(LocalDateTime.of(2018, 6, 20, 23, 0, 9))
     val assessment2016 = validCompletedAssessment(LocalDateTime.of(2016, 7, 20, 2, 0, 9))
-    val guillotinedAssessment2016 = assessment2016.copy(oasysSetPk = 5434, assessmentStatus = "GUILLOTINED")
-    val guillotinedAssessment20162 =
-      guillotinedAssessment2016.copy(oasysSetPk = 5435, dateCompleted = LocalDateTime.of(2016, 7, 20, 10, 0, 9))
+    val lockedIncompleteAssessment2016 = assessment2016.copy(oasysSetPk = 5434, assessmentStatus = "LOCKED_INCOMPLETE")
+    val lockedIncompleteAssessment20162 =
+      lockedIncompleteAssessment2016.copy(oasysSetPk = 5435, dateCompleted = LocalDateTime.of(2016, 7, 20, 10, 0, 9))
 
     private fun validCompletedAssessment(dateTime: LocalDateTime): Assessment {
       return Assessment(
