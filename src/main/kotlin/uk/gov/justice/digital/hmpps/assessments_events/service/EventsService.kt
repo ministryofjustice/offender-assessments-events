@@ -42,7 +42,7 @@ class EventsService(
     log.info("Getting new events since date: $date")
     val assessments = assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
       date,
-      setOf(StatusType.COMPLETE.value, StatusType.GUILLOTINED.value)
+      setOf(StatusType.COMPLETE.value, StatusType.LOCKED_INCOMPLETE.value)
     )
     log.info("Found ${assessments.size} new events.")
     return assessments.sortedBy { it.dateCompleted }

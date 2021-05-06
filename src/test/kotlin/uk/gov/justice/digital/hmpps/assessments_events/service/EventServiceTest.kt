@@ -57,22 +57,22 @@ internal class EventServiceTest {
   inner class GetNewEventsTests {
     @Test
     fun `Should send dtos to sns if two assessments are found`() {
-      val assessments = listOf(completedAssessment(), guillotinedAssessment())
+      val assessments = listOf(completedAssessment(), lockedIncompleteAssessment())
 
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
 
       eventsService.sendNewEventsToTopic()
 
       verify {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       }
       val eventsDto = slot<Collection<EventDto>>()
       verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
       assertThat(eventsDto.captured).hasSize(2)
       assertThat(eventsDto.captured.elementAt(0)).isEqualTo(completedAssessmentDto())
-      assertThat(eventsDto.captured.elementAt(1)).isEqualTo(guillotinedAssessmentDto())
+      assertThat(eventsDto.captured.elementAt(1)).isEqualTo(lockedIncompleteAssessmentDto())
     }
 
     @Test
@@ -80,13 +80,13 @@ internal class EventServiceTest {
       val assessments = listOf(completedAssessment())
 
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
 
       eventsService.sendNewEventsToTopic()
 
       verify {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       }
       val eventsDto = slot<Collection<EventDto>>()
       verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
@@ -99,13 +99,13 @@ internal class EventServiceTest {
       val assessments = listOf(assessment, assessment, assessment, assessment)
 
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
 
       eventsService.sendNewEventsToTopic()
 
       verify(exactly = 1) {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       }
       val eventsDto = slot<Collection<EventDto>>()
       verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
@@ -123,13 +123,13 @@ internal class EventServiceTest {
         assessment.copy(dateCompleted = dateCompleted.minusHours(9))
       )
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
 
       eventsService.sendNewEventsToTopic()
 
       verify(exactly = 1) {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       }
       verify(exactly = 1) { lastAccessedEventHelper.saveLastAccessedEvent(dateCompleted) }
     }
@@ -140,14 +140,14 @@ internal class EventServiceTest {
 
       val assessments = listOf(completedAssessment())
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(sinceDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(sinceDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
       eventsService.sendNewEventsToTopic(sinceDate)
 
       verify(exactly = 1) {
         assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
           sinceDate,
-          setOf("COMPLETE", "GUILLOTINED")
+          setOf("COMPLETE", "LOCKED_INCOMPLETE")
         )
       }
       verify(exactly = 1) { snsService.sendEventSNS(any()) }
@@ -164,14 +164,14 @@ internal class EventServiceTest {
 
       val assessments = listOf(completedAssessment())
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(sinceDate, setOf("COMPLETE", "GUILLOTINED"))
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(sinceDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
       eventsService.sendNewEventsToTopic(sinceDate)
 
       verify(exactly = 1) {
         assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
           sinceDate,
-          setOf("COMPLETE", "GUILLOTINED")
+          setOf("COMPLETE", "LOCKED_INCOMPLETE")
         )
       }
       verify { lastAccessedEventHelper wasNot Called }
@@ -196,11 +196,11 @@ internal class EventServiceTest {
     )
   }
 
-  fun guillotinedAssessmentDto(): EventDto {
+  fun lockedIncompleteAssessmentDto(): EventDto {
     return completedAssessmentDto().copy(
-      assessmentStatus = "GUILLOTINED",
-      eventType = EventType.ASSESSMENT_GUILLOTINED,
-      eventDate = guillotinedAssessment().dateCompleted
+      assessmentStatus = "LOCKED_INCOMPLETE",
+      eventType = EventType.ASSESSMENT_LOCKED_INCOMPLETE,
+      eventDate = lockedIncompleteAssessment().dateCompleted
     )
   }
 
@@ -220,9 +220,9 @@ internal class EventServiceTest {
     )
   }
 
-  fun guillotinedAssessment(): Assessment {
+  fun lockedIncompleteAssessment(): Assessment {
     return completedAssessment().copy(
-      assessmentStatus = "GUILLOTINED",
+      assessmentStatus = "LOCKED_INCOMPLETE",
       dateCompleted = LocalDateTime.of(2020, 2, 1, 1, 1, 1)
     )
   }
