@@ -10,6 +10,10 @@ spec:
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   concurrencyPolicy: Forbid
+  # Check if we fail to create jobs within this 2 minute window and count as a missed schedule
+  # The Cron controller will stop creating jobs after 100 consecutive missed schedules
+  # https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#cron-job-limitations
+  startingDeadlineSeconds: 120
   jobTemplate:
     metadata:
       labels:
