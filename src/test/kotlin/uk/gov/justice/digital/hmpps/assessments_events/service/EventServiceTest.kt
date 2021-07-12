@@ -22,18 +22,17 @@ import uk.gov.justice.digital.hmpps.assessments_events.dto.EventType
 import uk.gov.justice.digital.hmpps.assessments_events.entity.Assessment
 import uk.gov.justice.digital.hmpps.assessments_events.entity.AssessmentGroup
 import uk.gov.justice.digital.hmpps.assessments_events.entity.Offender
-import uk.gov.justice.digital.hmpps.assessments_events.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.assessments_events.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.assessments_events.utils.LastAccessedEventHelper
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
 @DisplayName("Event Service tests")
-internal class EventServiceTest : IntegrationTestBase() {
+internal class EventServiceTest {
 
-  private final val assessmentRepository: AssessmentRepository = mockk()
-  private final val lastAccessedEventHelper: LastAccessedEventHelper = mockk()
-  private final val snsService: SnsService = mockk()
+  private val assessmentRepository: AssessmentRepository = mockk()
+  private val lastAccessedEventHelper: LastAccessedEventHelper = mockk()
+  private val snsService: SnsService = mockk()
 
   private val eventsService = EventsService(assessmentRepository, lastAccessedEventHelper, snsService)
 
@@ -57,36 +56,37 @@ internal class EventServiceTest : IntegrationTestBase() {
   @DisplayName("Get New Events")
   inner class GetNewEventsTests {
     @Test
-    fun `Should send dto to sns if one assessment is found`() {
-      val assessments = listOf(getPopulatedAssessment())
+    fun `Should send dtos to sns if two assessments are found`() {
+      val assessments = listOf(completedAssessment(), lockedIncompleteAssessment())
 
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
 
       eventsService.sendNewEventsToTopic()
 
       verify {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       }
       val eventsDto = slot<Collection<EventDto>>()
       verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
-      assertThat(eventsDto.captured).hasSize(1)
-      assertThat(eventsDto.captured.elementAt(0)).isEqualTo(getPopulatedDto())
+      assertThat(eventsDto.captured).hasSize(2)
+      assertThat(eventsDto.captured.elementAt(0)).isEqualTo(completedAssessmentDto())
+      assertThat(eventsDto.captured.elementAt(1)).isEqualTo(lockedIncompleteAssessmentDto())
     }
 
     @Test
     fun `Should update last accessed event when assessment is found`() {
-      val assessments = listOf(getPopulatedAssessment())
+      val assessments = listOf(completedAssessment())
 
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
 
       eventsService.sendNewEventsToTopic()
 
       verify {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       }
       val eventsDto = slot<Collection<EventDto>>()
       verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
@@ -95,27 +95,27 @@ internal class EventServiceTest : IntegrationTestBase() {
 
     @Test
     fun `Should send multiple event dtos to SNS if multiple assessments found`() {
-      val assessment = getPopulatedAssessment()
+      val assessment = completedAssessment()
       val assessments = listOf(assessment, assessment, assessment, assessment)
 
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
 
       eventsService.sendNewEventsToTopic()
 
       verify(exactly = 1) {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       }
       val eventsDto = slot<Collection<EventDto>>()
       verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
       assertThat(eventsDto.captured).hasSize(4)
-      assertThat(eventsDto.captured).element(3).isEqualTo(getPopulatedDto())
+      assertThat(eventsDto.captured).element(3).isEqualTo(completedAssessmentDto())
     }
 
     @Test
     fun `Should update last accessed date with most recent date if multiple assessments found`() {
-      val assessment = getPopulatedAssessment()
+      val assessment = completedAssessment()
       val assessments = listOf(
         assessment,
         assessment.copy(dateCompleted = dateCompleted.minusDays(3)),
@@ -123,13 +123,13 @@ internal class EventServiceTest : IntegrationTestBase() {
         assessment.copy(dateCompleted = dateCompleted.minusHours(9))
       )
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
 
       eventsService.sendNewEventsToTopic()
 
       verify(exactly = 1) {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(testDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(testDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       }
       verify(exactly = 1) { lastAccessedEventHelper.saveLastAccessedEvent(dateCompleted) }
     }
@@ -138,32 +138,42 @@ internal class EventServiceTest : IntegrationTestBase() {
     fun `Should send event dtos since given date to sns`() {
       val sinceDate = LocalDateTime.of(2021, 1, 1, 1, 1, 1)
 
-      val assessments = listOf(getPopulatedAssessment())
+      val assessments = listOf(completedAssessment())
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(sinceDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(sinceDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
       eventsService.sendNewEventsToTopic(sinceDate)
 
-      verify(exactly = 1) { assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(sinceDate, "COMPLETE") }
+      verify(exactly = 1) {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
+          sinceDate,
+          setOf("COMPLETE", "LOCKED_INCOMPLETE")
+        )
+      }
       verify(exactly = 1) { snsService.sendEventSNS(any()) }
 
       val eventsDto = slot<Collection<EventDto>>()
       verify(exactly = 1) { snsService.sendEventSNS(capture(eventsDto)) }
       assertThat(eventsDto.captured).hasSize(1)
-      assertThat(eventsDto.captured).element(0).isEqualTo(getPopulatedDto())
+      assertThat(eventsDto.captured).element(0).isEqualTo(completedAssessmentDto())
     }
 
     @Test
     fun `Should not update last accessed event when given date`() {
       val sinceDate = LocalDateTime.of(2021, 1, 1, 1, 1, 1)
 
-      val assessments = listOf(getPopulatedAssessment())
+      val assessments = listOf(completedAssessment())
       every {
-        assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(sinceDate, "COMPLETE")
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(sinceDate, setOf("COMPLETE", "LOCKED_INCOMPLETE"))
       } returns assessments
       eventsService.sendNewEventsToTopic(sinceDate)
 
-      verify(exactly = 1) { assessmentRepository.findByDateCompletedAfterAndAssessmentStatus(sinceDate, "COMPLETE") }
+      verify(exactly = 1) {
+        assessmentRepository.findByDateCompletedAfterAndAssessmentStatusIn(
+          sinceDate,
+          setOf("COMPLETE", "LOCKED_INCOMPLETE")
+        )
+      }
       verify { lastAccessedEventHelper wasNot Called }
     }
   }
@@ -173,9 +183,9 @@ internal class EventServiceTest : IntegrationTestBase() {
   private val offenderPk = 25L
   private val offenderPNC = "ABC"
   private val assessmentType = "type"
-  private val assessmentStatus = "pending"
+  private val assessmentStatus = "COMPLETE"
 
-  fun getPopulatedDto(): EventDto {
+  fun completedAssessmentDto(): EventDto {
     return EventDto(
       offenderPk,
       offenderPNC,
@@ -186,7 +196,15 @@ internal class EventServiceTest : IntegrationTestBase() {
     )
   }
 
-  fun getPopulatedAssessment(): Assessment {
+  fun lockedIncompleteAssessmentDto(): EventDto {
+    return completedAssessmentDto().copy(
+      assessmentStatus = "LOCKED_INCOMPLETE",
+      eventType = EventType.ASSESSMENT_LOCKED_INCOMPLETE,
+      eventDate = lockedIncompleteAssessment().dateCompleted
+    )
+  }
+
+  fun completedAssessment(): Assessment {
     return Assessment(
       setPk,
       assessmentStatus,
@@ -199,6 +217,13 @@ internal class EventServiceTest : IntegrationTestBase() {
           offenderPNC
         )
       )
+    )
+  }
+
+  fun lockedIncompleteAssessment(): Assessment {
+    return completedAssessment().copy(
+      assessmentStatus = "LOCKED_INCOMPLETE",
+      dateCompleted = LocalDateTime.of(2020, 2, 1, 1, 1, 1)
     )
   }
 }
