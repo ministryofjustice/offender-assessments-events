@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.5"
   kotlin("plugin.spring") version "1.5.20"
   kotlin("plugin.jpa") version "1.5.20"
 }
@@ -16,21 +16,21 @@ dependencies {
 
   implementation("org.springframework.cloud:spring-cloud-starter-aws-messaging:2.2.6.RELEASE")
 
-  implementation("org.springdoc:springdoc-openapi-ui:1.5.9")
-  implementation("org.springdoc:springdoc-openapi-data-rest:1.5.9")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.5.9")
+  implementation("org.springdoc:springdoc-openapi-ui:1.5.10")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.5.10")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.5.10")
 
   implementation("org.apache.commons:commons-lang3:3.12.0")
 
   implementation(files("lib/ojdbc8-12.2.0.1.jar"))
 
   runtimeOnly("com.h2database:h2:1.4.200")
-  runtimeOnly("org.flywaydb:flyway-core:7.8.1")
+  runtimeOnly("org.flywaydb:flyway-core:7.12.0")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.ninja-squad:springmockk:3.0.1")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
-  testImplementation("org.testcontainers:junit-jupiter:1.15.3")
-  testImplementation("org.testcontainers:localstack:1.15.3")
+  testImplementation("org.testcontainers:junit-jupiter:1.16.0")
+  testImplementation("org.testcontainers:localstack:1.16.0")
   testImplementation("org.awaitility:awaitility-kotlin:4.1.0")
 }
