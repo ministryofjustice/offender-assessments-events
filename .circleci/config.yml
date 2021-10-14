@@ -3,6 +3,11 @@ version: 2.1
 orbs:
   hmpps: ministryofjustice/hmpps@3.11
 
+parameters:
+  alerts-slack-channel:
+    type: string
+    default: "hmpps-assessments-dev"
+
 executors:
   validator:
     machine:
