@@ -1,11 +1,15 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.16"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.0.1-beta"
   kotlin("plugin.spring") version "1.5.31"
   kotlin("plugin.jpa") version "1.5.31"
 }
 
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
+}
+
+dependencyCheck {
+  suppressionFiles.add("suppressions.xml")
 }
 
 dependencies {
@@ -22,7 +26,7 @@ dependencies {
 
   implementation("org.apache.commons:commons-lang3:3.12.0")
 
-  implementation(files("lib/ojdbc8-12.2.0.1.jar"))
+  implementation("com.oracle.database.jdbc:ojdbc8:12.2.0.1")
 
   runtimeOnly("com.h2database:h2:1.4.200")
   runtimeOnly("org.flywaydb:flyway-core:7.12.0")
