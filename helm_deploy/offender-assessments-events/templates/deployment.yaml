@@ -58,6 +58,10 @@ spec:
           volumeMounts:
            - mountPath: {{ .Values.env.LAST_ACCESSED_EVENT_DIR }}
              name: volume
+{{- with .Values.deployment.resources }}
+          resources:
+{{ toYaml . | indent 12 }}
+{{- end }}
           {{ include "deployment.envs" . | nindent 10 }}
       volumes:
         - name: volume
