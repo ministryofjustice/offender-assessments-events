@@ -60,7 +60,7 @@ spec:
              name: volume
 {{- with .Values.deployment.resources }}
           resources:
-  {{ toYaml . | indent 12 }}
+{{ toYaml . | indent 12 }}
 {{- end }}
           {{ include "deployment.envs" . | nindent 10 }}
       volumes:
