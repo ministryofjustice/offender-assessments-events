@@ -47,7 +47,7 @@ java -jar build/libs/offender-assessments-events-<yyyy-mm-dd>.jar
 
 The application can be configured to use LocalStack and an in-memory H2 DB by using the spring boot profile `local`. Ensure you have LocalStack running, on the command line run:
 ```  
-SPRING_PROFILES_ACTIVE=dev AWS_PROVIDER=localstack AWS_ACCESS_KEY=local AWS_SECRET_KEY=dev
+SPRING_PROFILES_ACTIVE=local AWS_PROVIDER=localstack AWS_ACCESS_KEY=local AWS_SECRET_KEY=dev
 java -jar build/libs/offender-assessments-events-<yyyy-mm-dd>.jar  
 ```  
 

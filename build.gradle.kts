@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.0.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.0"
   kotlin("plugin.spring") version "1.6.10"
   kotlin("plugin.jpa") version "1.6.10"
 }
@@ -20,9 +20,9 @@ dependencies {
 
   implementation("org.springframework.cloud:spring-cloud-starter-aws-messaging:2.2.6.RELEASE")
 
-  implementation("org.springdoc:springdoc-openapi-ui:1.5.10")
-  implementation("org.springdoc:springdoc-openapi-data-rest:1.5.10")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.5.10")
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.6")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.6")
 
   implementation("org.apache.commons:commons-lang3:3.12.0")
 
