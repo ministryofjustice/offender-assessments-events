@@ -8,7 +8,7 @@ configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
 }
 
-dependencyCheck
+dependencyCheck {
   suppressionFiles.add("suppressions.xml")
 }
 
