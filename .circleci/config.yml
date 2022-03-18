@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@3.13.0
+  hmpps: ministryofjustice/hmpps@3.14
 
 parameters:
   alerts-slack-channel:
@@ -125,6 +125,7 @@ workflows:
                 - main
     jobs:
       - hmpps/veracode_policy_scan:
+          cache_key: v2_1
           slack_channel: << pipeline.parameters.alerts-slack-channel >>
           context:
             - veracode-credentials
