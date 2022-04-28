@@ -27,7 +27,7 @@ dependencies {
   implementation("org.apache.commons:commons-lang3:3.12.0")
 
   implementation("com.oracle.database.jdbc:ojdbc8:21.5.0.0")
-
+  implementation("net.logstash.logback:logstash-logback-encoder:7.1.1")
   runtimeOnly("com.h2database:h2:2.1.212")
   runtimeOnly("org.flywaydb:flyway-core:8.5.9")
 
