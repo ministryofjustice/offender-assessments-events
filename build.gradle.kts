@@ -29,7 +29,7 @@ dependencies {
   implementation("com.oracle.database.jdbc:ojdbc8:21.6.0.0.1")
   implementation("net.logstash.logback:logstash-logback-encoder:7.2")
   runtimeOnly("com.h2database:h2:2.1.214")
-  runtimeOnly("org.flywaydb:flyway-core:8.5.13")
+  runtimeOnly("org.flywaydb:flyway-core")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
   testImplementation("com.ninja-squad:springmockk:3.1.1")
