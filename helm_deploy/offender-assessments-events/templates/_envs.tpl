@@ -62,5 +62,8 @@ env:
       secretKeyRef:
         name: {{ template "app.name" . }}
         key: SPRING_DATASOURCE_URL
+        
+  - name: APPLICATIONINSIGHTS_CONFIGURATION_FILE
+    value: "applicationinsights.json"
 
 {{- end -}}
