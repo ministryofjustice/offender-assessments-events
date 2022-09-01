@@ -99,4 +99,3 @@ Then, POST the request for the access token from OAuth, using the encoded secret
  curl --location --request POST 'http://localhost:9090/auth/oauth/token?grant_type=client_credentials' \
  --header 'Authorization: Basic c2VudGVuY2UtcGxhbi1hcGktY2xpZW50OmNsaWVudHNlY3JldA=='
 ```
-
