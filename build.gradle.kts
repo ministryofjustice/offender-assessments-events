@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.4.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.4.3"
   kotlin("plugin.spring") version "1.7.10"
   kotlin("plugin.jpa") version "1.7.10"
 }
@@ -20,13 +20,13 @@ dependencies {
 
   implementation("org.springframework.cloud:spring-cloud-starter-aws-messaging:2.2.6.RELEASE")
 
-  implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
-  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.9")
-  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.9")
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
+  implementation("org.springdoc:springdoc-openapi-data-rest:1.6.11")
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.11")
 
   implementation("org.apache.commons:commons-lang3:3.12.0")
 
-  implementation("com.oracle.database.jdbc:ojdbc8:21.6.0.0.1")
+  implementation("com.oracle.database.jdbc:ojdbc8:21.7.0.0")
   implementation("net.logstash.logback:logstash-logback-encoder:7.2")
   runtimeOnly("com.h2database:h2:2.1.214")
   runtimeOnly("org.flywaydb:flyway-core")
