@@ -63,5 +63,6 @@ dist
 !.elasticbeanstalk/*.global.yml
 
 # AWS DOcker build
+.editorconfig
 ecr.repo
 /dps-gradle-spring-boot-suppressions.xml
