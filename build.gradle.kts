@@ -32,7 +32,7 @@ dependencies {
   runtimeOnly("org.flywaydb:flyway-core")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
-  testImplementation("com.ninja-squad:springmockk:3.1.2")
+  testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.testcontainers:junit-jupiter:1.17.6")
   testImplementation("org.testcontainers:localstack:1.17.6")
